@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>隐私政策中心 - 视觉稿</title>
+<style>
+  :root {
+    --bg:#F7F8FA; --card:#FFF; --text:#0f172a; --muted:#6b7280;
+    --line:#E5E7EB; --primary:#3B82F6; --success:#16a34a; --danger:#ef4444; --warn:#f59e0b;
+  }
+  *{box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--text);} 
+  .app{width:1440px; height:900px; margin:0 auto; background:var(--bg);} 
+  .topbar{height:64px; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; padding:0 24px; gap:16px;}
+  .logo{width:28px;height:28px;border-radius:8px;background:var(--primary);} 
+  .title{font-size:18px;font-weight:600;} 
+  .search{margin-left:auto; display:flex; align-items:center; gap:8px; background:#F3F4F6; border:1px solid var(--line); padding:8px 12px; border-radius:8px; min-width:280px; color:var(--muted);} 
+  .btn{background:var(--primary); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:600;}
+  .avatar{width:32px;height:32px;border-radius:50%; background:#cbd5e1;} 
+
+  .content{display:grid; grid-template-columns:280px 1fr; gap:16px; padding:16px 24px; height:836px;} 
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow:0 1px 2px rgba(0,0,0,0.04);} 
+  .tree-search{background:#F3F4F6; border:1px solid var(--line); padding:8px 10px; border-radius:8px; color:var(--muted); margin-bottom:12px;} 
+  .tree-item{margin:6px 0;}
+  .tree-group{font-weight:600; margin-top:8px;}
+  .tree-leaf{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:8px; color:#111827;}
+  .leaf-selected{background:#EEF2FF; border:1px solid #C7D2FE;} 
+  .checkbox{width:14px;height:14px;border:1.5px solid #94A3B8;border-radius:3px; display:inline-block; position:relative;}
+  .checkbox.checked{border-color:var(--primary); background:var(--primary);} 
+  .checkbox.checked::after{content:''; position:absolute; left:3px; top:1px; width:6px; height:9px; border-right:2px solid white; border-bottom:2px solid white; transform:rotate(45deg);} 
+
+  .breadcrumb{color:var(--muted); font-size:12px;} 
+  .header{display:flex; justify-content:space-between; align-items:center; margin-top:8px;} 
+  .h1{font-size:20px; font-weight:700;} 
+  .tag{font-size:12px; padding:4px 8px; border-radius:999px; background:#E0F2FE; color:#0284C7; font-weight:600;}
+  .actions{display:flex; gap:8px;} 
+  .btn-ghost{border:1px solid var(--line); background:#fff; padding:6px 10px; border-radius:8px; color:#111827;} 
+
+  .divider{height:1px; background:var(--line); margin:12px 0;} 
+  .compare-box{border:1px solid var(--line); border-radius:12px; padding:12px; background:#FCFCFD;} 
+  .compare-row{padding:10px; border-radius:8px; margin-bottom:8px;} 
+  .ver{font-size:12px; color:var(--muted); margin-bottom:4px;} 
+  .diff-add{background:#ECFDF3; border:1px solid #86EFAC;} 
+  .diff-del{background:#FEF2F2; border:1px solid #FCA5A5;} 
+  .diff-mod{background:#FFFBEB; border:1px solid #FCD34D;} 
+  .section-title{font-size:12px; color:var(--muted); font-weight:600; margin-bottom:6px;} 
+  .footer-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:8px;} 
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="logo"></div>
+    <div class="title">隐私政策中心</div>
+    <div class="search">🔍 关键词搜索</div>
+    <button class="btn">+ 新建版本</button>
+    <div class="avatar"></div>
+  </div>
+
+  <div class="content">
+    <div class="panel">
+      <div class="tree-search">搜索 APP / 版本</div>
+      <div class="tree-group">业务系统A</div>
+      <div class="tree-item tree-leaf"><span class="checkbox"></span>v1.0 <span style="color:#94A3B8">(2026-02-01)</span></div>
+      <div class="tree-item tree-leaf leaf-selected"><span class="checkbox checked"></span>v1.1 <span style="color:#94A3B8">(2026-02-15)</span></div>
+      <div class="tree-item tree-leaf leaf-selected"><span class="checkbox checked"></span>v1.2 <span style="color:#94A3B8">(当前)</span></div>
+      <div class="tree-group">业务系统B</div>
+      <div class="tree-item tree-leaf"><span class="checkbox"></span>v2.0</div>
+      <div class="tree-item tree-leaf"><span class="checkbox"></span>v2.1</div>
+    </div>
+
+    <div class="panel">
+      <div class="breadcrumb">隐私政策中心 / 业务系统A / v1.2</div>
+      <div class="header">
+        <div>
+          <div class="h1">XX隐私政策 v1.2</div>
+          <div style="margin-top:6px; color:var(--muted); font-size:12px;">最近修改：2026-03-01</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="tag">已发布</span>
+          <div class="actions">
+            <button class="btn-ghost">导出Word</button>
+            <button class="btn-ghost">导出PDF</button>
+            <button class="btn-ghost">编辑</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">对比模式（同框交错）</div>
+      <div class="compare-box">
+        <div class="compare-row">
+          <div class="ver">[v1.1]</div>
+          <div>段落1：我们将收集设备信息用于提供服务。</div>
+        </div>
+        <div class="compare-row diff-mod">
+          <div class="ver">[v1.2]</div>
+          <div>段落1：我们将收集设备信息与使用记录，用于提供服务与优化体验。</div>
+        </div>
+        <div class="compare-row diff-del">
+          <div class="ver">[v1.1]</div>
+          <div>段落2：我们不会与第三方共享您的位置数据。</div>
+        </div>
+        <div class="compare-row diff-add">
+          <div class="ver">[v1.2]</div>
+          <div>段落2：在获得授权后，我们可能与合作伙伴共享位置数据以提供地图服务。</div>
+        </div>
+        <div class="compare-row">
+          <div class="ver">[v1.1]</div>
+          <div>段落3：您可以随时在设置中撤回授权。</div>
+        </div>
+        <div class="compare-row diff-mod">
+          <div class="ver">[v1.2]</div>
+          <div>段落3：您可以随时在设置中撤回授权，并查看数据使用记录。</div>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn-ghost">导出对比Word</button>
+        <button class="btn-ghost">导出对比PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
