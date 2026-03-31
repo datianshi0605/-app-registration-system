@@ -45,16 +45,16 @@ npm start
 ## 🔧 配置
 
 ### 端口配置
-默认端口：9999
+默认端口：3000
 
 修改方法：
 ```bash
 # 方法 1: 环境变量
-export PORT=3000
+export PORT=9999
 npm start
 
 # 方法 2: 修改 .env 文件
-PORT=3000
+PORT=9999
 ```
 
 ### 数据库

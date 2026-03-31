@@ -8,7 +8,7 @@ const fs = require('fs');
 const upload = multer({ dest: 'uploads/' });
 
 const app = express();
-const PORT = process.env.PORT || 9999;
+const PORT = process.env.PORT || 3000;
 
 // Ensure uploads directory exists
 if (!fs.existsSync('uploads')) {
