@@ -7,12 +7,48 @@ echo ""
 
 # 检查 Node.js
 if ! command -v node &> /dev/null; then
-    echo "❌ 错误：未检测到 Node.js，请先安装 Node.js (>= 14.0.0)"
-    echo "   访问 https://nodejs.org 下载安装"
-    exit 1
+    echo "📦 未检测到 Node.js，正在自动安装..."
+    echo ""
+    
+    # 检测操作系统
+    if [ -f /etc/debian_version ]; then
+        # Debian/Ubuntu
+        echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 18.x..."
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+    elif [ -f /etc/redhat-release ]; then
+        # CentOS/RHEL
+        echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 18.x..."
+        curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+        sudo yum install -y nodejs
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        echo "检测到 macOS 系统"
+        if command -v brew &> /dev/null; then
+            echo "使用 Homebrew 安装 Node.js..."
+            brew install node
+        else
+            echo "❌ 未检测到 Homebrew，请先安装："
+            echo "   /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+            exit 1
+        fi
+    else
+        echo "❌ 无法自动安装 Node.js，请手动安装："
+        echo "   访问 https://nodejs.org"
+        exit 1
+    fi
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Node.js 安装失败"
+        exit 1
+    fi
+    
+    echo "✓ Node.js 安装成功"
+    echo ""
 fi
 
 echo "✓ Node.js 版本：$(node -v)"
+echo "✓ npm 版本：$(npm -v)"
 echo ""
 
 # 安装依赖
