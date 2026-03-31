@@ -13,13 +13,13 @@ if ! command -v node &> /dev/null; then
     # 检测操作系统
     if [ -f /etc/debian_version ]; then
         # Debian/Ubuntu
-        echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 20.x (LTS)..."
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 22.x (最新版)..."
+        curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
         sudo apt-get install -y nodejs
     elif [ -f /etc/redhat-release ]; then
         # CentOS/RHEL
-        echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 20.x (LTS)..."
-        curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+        echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 22.x (最新版)..."
+        curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -
         sudo yum install -y nodejs
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
