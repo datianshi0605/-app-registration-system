@@ -45,6 +45,51 @@ if ! command -v node &> /dev/null; then
     
     echo "✓ Node.js 安装成功"
     echo ""
+else
+    # 检查 Node.js 版本
+    NODE_VERSION=$(node -v | cut -d'.' -f1 | cut -d'v' -f2)
+    
+    if [ "$NODE_VERSION" -lt 22 ]; then
+        echo "⚠️  检测到 Node.js 版本过低 (v$(node -v))"
+        echo "   建议升级到 Node.js 22.x (最新版)"
+        echo ""
+        read -p "是否现在升级？(y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo "📦 正在升级 Node.js..."
+            
+            # 检测操作系统
+            if [ -f /etc/debian_version ]; then
+                # Debian/Ubuntu
+                echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 22.x..."
+                curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+                sudo apt-get install -y nodejs
+            elif [ -f /etc/redhat-release ]; then
+                # CentOS/RHEL
+                echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 22.x..."
+                curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -
+                sudo yum install -y nodejs
+            elif [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS
+                echo "检测到 macOS 系统，使用 Homebrew 升级..."
+                brew upgrade node
+            else
+                echo "❌ 无法自动升级，请手动安装："
+                echo "   访问 https://nodejs.org"
+                exit 1
+            fi
+            
+            echo "✓ Node.js 升级成功：$(node -v)"
+            echo ""
+        else
+            echo "⚠️  继续使用当前版本：$(node -v)"
+            echo "   建议使用 Node.js 22.x 以获得最佳性能和安全性"
+            echo ""
+        fi
+    else
+        echo "✓ Node.js 版本符合要求：$(node -v)"
+        echo ""
+    fi
 fi
 
 echo "✓ Node.js 版本：$(node -v)"
