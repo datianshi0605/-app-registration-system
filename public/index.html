@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应用登记管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Modern badges with gradients */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-developing { 
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); 
+            color: #1e40af; 
+            border: 1px solid #93c5fd;
+        }
+        .status-launched { 
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); 
+            color: #166534; 
+            border: 1px solid #86efac;
+        }
+        .status-offline { 
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); 
+            color: #991b1b; 
+            border: 1px solid #fca5a5;
+        }
+        .status-paused { 
+            background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%); 
+            color: #92400e; 
+            border: 1px solid #facc15;
+        }
+        
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+        .type-app { 
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
+            color: #1d4ed8; 
+            border: 1px solid #93c5fd;
+        }
+        .type-miniprogram { 
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
+            color: #047857; 
+            border: 1px solid #6ee7b7;
+        }
+        
+        .action-btn {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 2px;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .action-edit { 
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        .action-edit:hover { 
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+        }
+        .action-delete { 
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .action-delete:hover { 
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+        }
+        .action-permanent-delete { 
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+        .action-permanent-delete:hover { 
+            background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
+        }
+        
+        .main-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Modern card design with shadows and gradients */
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #f3f4f6;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        /* Modern form layout - initially hidden fields */
+        .form-row {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .form-label {
+            width: 140px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-right: 1.5rem;
+            text-align: right;
+        }
+        
+        .form-label.required::after {
+            content: "*";
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        
+        .form-input,
+        .form-textarea,
+        .form-select {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            min-width: 220px;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input:hover,
+        .form-textarea:hover,
+        .form-select:hover {
+            border-color: #9ca3af;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6b7280;
+            font-size: 1.25rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border: 2px dashed #e5e7eb;
+        }
+        
+        .no-data i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #9ca3af;
+        }
+        
+        /* Modern tab style with gradients */
+        .tab-active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .tab-inactive {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #4b5563;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .tab-active:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        
+        .tab-inactive:hover {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            color: #374151;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 240px;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e5e7eb;
+        }
+        
+        .analytics-section {
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .full-table {
+            width: 100%;
+            min-width: 2400px;
+            border-collapse: collapse;
+        }
+        
+        /* Modern button styles with gradients */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+        }
+        
+        .btn-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+        
+        .btn-purple:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+        
+        .btn-orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+        }
+        
+        .btn-orange:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+        }
+        
+        /* Modern pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 0.75rem;
+        }
+        
+        .pagination-info {
+            margin-right: 2rem;
+            color: #4b5563;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .page-item {
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px solid #e5e7eb;
+            color: #4b5563;
+        }
+        
+        .page-item:hover {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            color: #374151;
+            transform: translateY(-1px);
+        }
+        
+        .page-item.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .page-size-selector {
+            margin-left: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .show-all-toggle {
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Table styling */
+        .table-header-cell {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #1f2937;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .table-cell {
+            padding: 1rem 1.25rem;
+            font-size: 0.95rem;
+            color: #374151;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .table-row:hover {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+        
+        /* Initially hide type-specific fields */
+        #appFields, #miniprogramFields {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .form-label {
+                width: auto;
+                text-align: left;
+                margin-right: 0;
+                margin-bottom: 0.75rem;
+            }
+            .full-table {
+                min-width: 1000px;
+            }
+            .pagination {
+                flex-wrap: wrap;
+            }
+            .pagination-info {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .page-size-selector {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+            .show-all-toggle {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="main-container py-8">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-3">应用查看登记管理系统</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">现代化的企业级应用管理平台，支持APP和小程序的统一登记、导入、查询和分析</p>
+        </div>
+
+        <!-- View Toggle Tabs -->
+        <div class="flex justify-center mb-8">
+            <div class="inline-flex rounded-xl shadow-lg" role="group">
+                <button id="activeTabBtn" type="button" 
+                        class="px-8 py-3 text-base font-semibold tab-active rounded-l-xl hover:bg-blue-700 focus:z-10 transition-all">
+                    <i class="fas fa-circle-dot mr-3"></i>活跃应用
+                </button>
+                <button id="offlineTabBtn" type="button" 
+                        class="px-8 py-3 text-base font-semibold tab-inactive rounded-r-xl hover:bg-gray-100 focus:z-10 transition-all">
+                    <i class="fas fa-archive mr-3"></i>已下线应用
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h2 class="text-2xl font-bold text-gray-900">🔍 应用搜索</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="form-row">
+                        <label class="form-label">应用名称</label>
+                        <input type="text" id="searchName" placeholder="请输入应用名称进行搜索"
+                               class="form-input">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">所属机构/团队</label>
+                        <input type="text" id="searchInstitution" placeholder="请输入机构或团队名称"
+                               class="form-input">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">应用类型</label>
+                        <select id="searchAppType" class="form-select">
+                            <option value="">全部类型</option>
+                            <option value="app">APP</option>
+                            <option value="miniprogram">小程序</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-4 items-center">
+                    <button id="searchBtn" class="btn btn-primary">
+                        <i class="fas fa-search"></i> 执行搜索
+                    </button>
+                    <button id="clearSearchBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> 清空条件
+                    </button>
+                    <button id="exportBtn" class="btn btn-purple">
+                        <i class="fas fa-file-export"></i> 导出数据
+                    </button>
+                    <button id="appTemplateBtn" class="btn btn-success">
+                        <i class="fas fa-download"></i> APP模板
+                    </button>
+                    <button id="miniprogramTemplateBtn" class="btn btn-orange">
+                        <i class="fas fa-download"></i> 小程序模板
+                    </button>
+                    <label for="importFile" class="btn btn-primary cursor-pointer">
+                        <i class="fas fa-upload"></i> 批量导入
+                        <input type="file" id="importFile" accept=".xlsx,.xls" class="hidden" />
+                    </label>
+                    <div class="show-all-toggle">
+                        <span>显示全部:</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="showAllToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card fade-in" style="margin-bottom: 0;">
+                <div class="card-body flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">APP 总量</p>
+                        <h3 class="text-3xl font-bold text-blue-600" id="appCount">0</h3>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-mobile-alt text-2xl text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card fade-in" style="margin-bottom: 0;">
+                <div class="card-body flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">小程序总量</p>
+                        <h3 class="text-3xl font-bold text-green-600" id="miniprogramCount">0</h3>
+                    </div>
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-th text-2xl text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card fade-in" style="margin-bottom: 0;">
+                <div class="card-body flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">开发机构总量</p>
+                        <h3 class="text-3xl font-bold text-purple-600" id="institutionCount">0</h3>
+                    </div>
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-building text-2xl text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Application Button -->
+        <div class="flex justify-center mb-8">
+            <button id="addApplicationBtn" class="btn btn-primary text-xl px-8 py-4">
+                <i class="fas fa-plus mr-3"></i> 添加新应用
+            </button>
+        </div>
+
+        <!-- Registration Form - MODERN STYLE with dynamic fields -->
+        <div id="registrationFormCard" class="card fade-in hidden">
+            <div class="card-header">
+                <h2 class="text-2xl font-bold text-gray-900">📝 应用登记</h2>
+            </div>
+            <div class="card-body">
+                <form id="registrationForm">
+                    <input type="hidden" id="editId">
+                    
+                    <!-- Application Type -->
+                    <div class="form-row">
+                        <label class="form-label required">应用类型</label>
+                        <select id="appType" required class="form-select">
+                            <option value="">请选择应用类型</option>
+                            <option value="app">APP</option>
+                            <option value="miniprogram">小程序</option>
+                        </select>
+                    </div>
+                    
+                    <!-- APP fields - initially hidden -->
+                    <div id="appFields" style="display: none;">
+                        <div class="form-row">
+                            <label class="form-label required">APP名称</label>
+                            <input type="text" id="appName" required class="form-input" placeholder="请输入完整的APP名称">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label required">所属团队</label>
+                            <input type="text" id="teamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">主要市场</label>
+                            <input type="text" id="appMarket" class="form-input" placeholder="例如：App Store、华为应用市场、小米应用商店">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">APP备案编号</label>
+                            <input type="text" id="appLicenseNumber" class="form-input" placeholder="例如：沪ICP备12345678号">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">ICP备案编号</label>
+                            <input type="text" id="icpLicenseNumber" class="form-input" placeholder="例如：京ICP备12345678号">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">教育备案</label>
+                            <input type="text" id="educationFiling" class="form-input" placeholder="例如：教备2023-001">
+                        </div>
+                    </div>
+                    
+                    <!-- MiniProgram fields - initially hidden -->
+                    <div id="miniprogramFields" style="display: none;">
+                        <div class="form-row">
+                            <label class="form-label required">小程序名称</label>
+                            <input type="text" id="miniprogramName" required class="form-input" placeholder="请输入完整的小程序名称">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label required">小程序所属机构</label>
+                            <input type="text" id="miniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">小程序发布平台</label>
+                            <input type="text" id="miniprogramPlatform" class="form-input" placeholder="例如：微信小程序、支付宝小程序、百度智能小程序">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">小程序功能</label>
+                            <textarea id="miniprogramFunction" rows="3" class="form-textarea" placeholder="请详细描述小程序的主要功能模块"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">开发情况说明</label>
+                            <textarea id="developmentStatus" rows="3" class="form-textarea" placeholder="请说明当前开发进度、测试状态等"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">小程序部署位置</label>
+                            <input type="text" id="deploymentLocation" class="form-input" placeholder="例如：https://example.com/miniprogram">
+                        </div>
+                    </div>
+                    
+                    <!-- Common fields - always visible -->
+                    <div class="form-row">
+                        <label class="form-label">后台域名</label>
+                        <input type="text" id="backendDomain" class="form-input" placeholder="例如：api.example.com">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">产品负责人</label>
+                        <input type="text" id="productOwner" class="form-input" placeholder="姓名或工号">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">开发负责人</label>
+                        <input type="text" id="devOwner" class="form-input" placeholder="姓名或工号">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label required">应用状态</label>
+                        <select id="status" required class="form-select">
+                            <option value="developing">开发中</option>
+                            <option value="launched">已上线</option>
+                            <option value="offline">已下线</option>
+                            <option value="paused">暂停维护</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">备注信息</label>
+                        <textarea id="notes" rows="3" class="form-textarea" placeholder="其他需要说明的信息"></textarea>
+                    </div>
+                    
+                    <div class="flex gap-4 mt-6 pt-6 border-t border-gray-200">
+                        <button id="submitBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-save mr-2"></i> 保存登记信息
+                        </button>
+                        <button id="clearFormBtn" class="btn btn-secondary">
+                            <i class="fas fa-times mr-2"></i> 清空表单
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Application List with Pagination -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h2 class="text-2xl font-bold text-gray-900">📊 应用列表</h2>
+            </div>
+            <div class="card-body" style="padding: 2rem; overflow-x: auto;">
+                <table class="full-table">
+                        <thead>
+                            <tr>
+                                <th class="table-header-cell">ID</th>
+                                <th class="table-header-cell">类型</th>
+                                <th class="table-header-cell">应用名称</th>
+                                <th class="table-header-cell">所属机构/团队</th>
+                                <th class="table-header-cell">应用市场/发布平台</th>
+                                <th class="table-header-cell">备案编号/主要功能</th>
+                                <th class="table-header-cell">教育备案/开发状态</th>
+                                <th class="table-header-cell">后台域名</th>
+                                <th class="table-header-cell">产品负责人</th>
+                                <th class="table-header-cell">开发负责人</th>
+                                <th class="table-header-cell">状态</th>
+                                <th class="table-header-cell">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataBody">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                    <div id="noDataMessage" class="no-data hidden">
+                        <i class="fas fa-inbox"></i>
+                        <p>暂无应用登记数据</p>
+                    </div>
+                
+                <!-- Pagination Controls -->
+                <div id="paginationContainer" class="pagination hidden">
+                    <div class="pagination-info">
+                        当前显示第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页
+                    </div>
+                    <button id="prevPage" class="page-item">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div id="pageNumbers" class="flex gap-2"></div>
+                    <button id="nextPage" class="page-item">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="page-size-selector">
+                        <label for="pageSize">每页显示:</label>
+                        <select id="pageSize" class="form-select" style="width: auto; padding: 0.5rem 1rem; border-radius: 8px;">
+                            <option value="10">10条记录</option>
+                            <option value="20" selected>20条记录</option>
+                            <option value="50">50条记录</option>
+                            <option value="100">100条记录</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="analytics-section card fade-in">
+            <div class="card-header">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900">📈 数据分析报表</h2>
+                    <button id="refreshChartsBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt mr-2"></i> 刷新数据
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">应用类型分布</h3>
+                        <div class="chart-container">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">机构/团队分布 (Top 5)</h3>
+                        <div class="chart-container">
+                            <canvas id="teamChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">应用状态分布</h3>
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal (Popup for editing) -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-4xl w-full mx-4 shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">✏️ 编辑应用信息</h3>
+                <button id="closeEditModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="editForm">
+                <input type="hidden" id="editModalId">
+                
+                <!-- Application Type -->
+                <div class="form-row">
+                    <label class="form-label required">应用类型</label>
+                    <select id="editAppType" required class="form-select" disabled>
+                        <option value="app">APP</option>
+                        <option value="miniprogram">小程序</option>
+                    </select>
+                </div>
+                
+                <!-- APP fields -->
+                <div id="editAppFields" style="display: none;">
+                    <div class="form-row">
+                        <label class="form-label required">APP名称</label>
+                        <input type="text" id="editAppName" required class="form-input" placeholder="请输入完整的APP名称">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label required">所属团队</label>
+                        <input type="text" id="editTeamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">主要市场</label>
+                        <input type="text" id="editAppMarket" class="form-input" placeholder="例如：App Store、华为应用市场、小米应用商店">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">APP备案编号</label>
+                        <input type="text" id="editAppLicenseNumber" class="form-input" placeholder="例如：沪ICP备12345678号">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">ICP备案编号</label>
+                        <input type="text" id="editIcpLicenseNumber" class="form-input" placeholder="例如：京ICP备12345678号">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">教育备案</label>
+                        <input type="text" id="editEducationFiling" class="form-input" placeholder="例如：教备2023-001">
+                    </div>
+                </div>
+                
+                <!-- MiniProgram fields -->
+                <div id="editMiniprogramFields" class="hidden">
+                    <div class="form-row">
+                        <label class="form-label required">小程序名称</label>
+                        <input type="text" id="editMiniprogramName" required class="form-input" placeholder="请输入完整的小程序名称">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label required">小程序所属机构</label>
+                        <input type="text" id="editMiniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">小程序发布平台</label>
+                        <input type="text" id="editMiniprogramPlatform" class="form-input" placeholder="例如：微信小程序、支付宝小程序、百度智能小程序">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">小程序功能</label>
+                        <textarea id="editMiniprogramFunction" rows="3" class="form-textarea" placeholder="请详细描述小程序的主要功能模块"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">开发情况说明</label>
+                        <textarea id="editDevelopmentStatus" rows="3" class="form-textarea" placeholder="请说明当前开发进度、测试状态等"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">小程序部署位置</label>
+                        <input type="text" id="editDeploymentLocation" class="form-input" placeholder="例如：https://example.com/miniprogram">
+                    </div>
+                </div>
+                
+                <!-- Common fields -->
+                <div class="form-row">
+                    <label class="form-label">后台域名</label>
+                    <input type="text" id="editBackendDomain" class="form-input" placeholder="例如：api.example.com">
+                </div>
+                <div class="form-row">
+                    <label class="form-label">产品负责人</label>
+                    <input type="text" id="editProductOwner" class="form-input" placeholder="姓名或工号">
+                </div>
+                <div class="form-row">
+                    <label class="form-label">开发负责人</label>
+                    <input type="text" id="editDevOwner" class="form-input" placeholder="姓名或工号">
+                </div>
+                <div class="form-row">
+                    <label class="form-label required">应用状态</label>
+                    <select id="editStatus" required class="form-select">
+                        <option value="developing">开发中</option>
+                        <option value="launched">已上线</option>
+                        <option value="offline">已下线</option>
+                        <option value="paused">暂停维护</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label class="form-label">备注信息</label>
+                    <textarea id="editNotes" rows="3" class="form-textarea" placeholder="其他需要说明的信息"></textarea>
+                </div>
+                
+                <div class="flex gap-4 mt-6 pt-6 border-t border-gray-200">
+                    <button id="saveEditBtn" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i> 保存修改
+                    </button>
+                    <button id="cancelEditBtn" class="btn btn-secondary">
+                        <i class="fas fa-times mr-2"></i> 取消编辑
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">确认下线操作</h3>
+                <p class="text-gray-600 mb-8">确定要将此应用标记为下线状态吗？<br>记录将保留但不再显示在活跃列表中。</p>
+                <div class="flex justify-center space-x-6">
+                    <button id="cancelDeleteBtn" class="px-6 py-3 text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-medium">
+                        取消操作
+                    </button>
+                    <button id="confirmDeleteBtn" class="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all font-medium">
+                        确认下线
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permanent Delete Confirmation Modal -->
+    <div id="permanentDeleteModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-skull text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">永久删除警告</h3>
+                <p class="text-gray-600 mb-8">⚠️ 警告：此操作将<strong>永久删除</strong>该记录，无法恢复！<br>仅建议删除测试或示例数据。</p>
+                <div class="flex justify-center space-x-6">
+                    <button id="cancelPermanentDeleteBtn" class="px-6 py-3 text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-medium">
+                        取消操作
+                    </button>
+                    <button id="confirmPermanentDeleteBtn" class="px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl hover:from-gray-900 hover:to-black transition-all font-medium">
+                        永久删除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Result Modal -->
+    <div id="importResultModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl border border-gray-200">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-file-import text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">批量导入结果</h3>
+                <div id="importResultContent" class="text-gray-600 mb-8 text-left max-h-96 overflow-y-auto">
+                    <!-- Import results will be populated here -->
+                </div>
+                <div class="flex justify-center">
+                    <button id="closeImportResultBtn" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all font-medium">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const dataBody = document.getElementById('dataBody');
+        const noDataMessage = document.getElementById('noDataMessage');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const currentPageEl = document.getElementById('currentPage');
+        const totalPagesEl = document.getElementById('totalPages');
+        const pageNumbersEl = document.getElementById('pageNumbers');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageSizeSelect = document.getElementById('pageSize');
+        const showAllToggle = document.getElementById('showAllToggle');
+        
+        // Registration form card
+        const registrationFormCard = document.getElementById('registrationFormCard');
+        const addApplicationBtn = document.getElementById('addApplicationBtn');
+        
+        const appTypeSelect = document.getElementById('appType');
+        const appFields = document.getElementById('appFields');
+        const miniprogramFields = document.getElementById('miniprogramFields');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // APP form elements
+        const appNameInput = document.getElementById('appName');
+        const teamOrInstitutionInput = document.getElementById('teamOrInstitution');
+        const appMarketInput = document.getElementById('appMarket');
+        const appLicenseNumberInput = document.getElementById('appLicenseNumber');
+        const icpLicenseNumberInput = document.getElementById('icpLicenseNumber');
+        const educationFilingInput = document.getElementById('educationFiling');
+        
+        // MiniProgram form elements
+        const miniprogramNameInput = document.getElementById('miniprogramName');
+        const miniprogramInstitutionInput = document.getElementById('miniprogramInstitution');
+        const miniprogramPlatformInput = document.getElementById('miniprogramPlatform');
+        const miniprogramFunctionInput = document.getElementById('miniprogramFunction');
+        const developmentStatusInput = document.getElementById('developmentStatus');
+        const deploymentLocationInput = document.getElementById('deploymentLocation');
+        
+        // Common form elements
+        const backendDomainInput = document.getElementById('backendDomain');
+        const productOwnerInput = document.getElementById('productOwner');
+        const devOwnerInput = document.getElementById('devOwner');
+        const statusSelect = document.getElementById('status');
+        const notesInput = document.getElementById('notes');
+        const editIdInput = document.getElementById('editId');
+        
+        // Button elements
+        const clearFormBtn = document.getElementById('clearFormBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const appTemplateBtn = document.getElementById('appTemplateBtn');
+        const miniprogramTemplateBtn = document.getElementById('miniprogramTemplateBtn');
+        const refreshChartsBtn = document.getElementById('refreshChartsBtn');
+        const importFileInput = document.getElementById('importFile');
+        const closeImportResultBtn = document.getElementById('closeImportResultBtn');
+        
+        // Search elements
+        const searchNameInput = document.getElementById('searchName');
+        const searchInstitutionInput = document.getElementById('searchInstitution');
+        const searchAppTypeInput = document.getElementById('searchAppType');
+        
+        // Modal elements
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        
+        const permanentDeleteModal = document.getElementById('permanentDeleteModal');
+        const cancelPermanentDeleteBtn = document.getElementById('cancelPermanentDeleteBtn');
+        const confirmPermanentDeleteBtn = document.getElementById('confirmPermanentDeleteBtn');
+        
+        const importResultModal = document.getElementById('importResultModal');
+        
+        // Edit modal elements
+        const editModal = document.getElementById('editModal');
+        const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+        const editForm = document.getElementById('editForm');
+        const editModalId = document.getElementById('editModalId');
+        const editAppType = document.getElementById('editAppType');
+        const editAppFields = document.getElementById('editAppFields');
+        const editMiniprogramFields = document.getElementById('editMiniprogramFields');
+        
+        // Edit form elements
+        const editAppName = document.getElementById('editAppName');
+        const editTeamOrInstitution = document.getElementById('editTeamOrInstitution');
+        const editAppMarket = document.getElementById('editAppMarket');
+        const editAppLicenseNumber = document.getElementById('editAppLicenseNumber');
+        const editIcpLicenseNumber = document.getElementById('editIcpLicenseNumber');
+        const editEducationFiling = document.getElementById('editEducationFiling');
+        
+        const editMiniprogramName = document.getElementById('editMiniprogramName');
+        const editMiniprogramInstitution = document.getElementById('editMiniprogramInstitution');
+        const editMiniprogramPlatform = document.getElementById('editMiniprogramPlatform');
+        const editMiniprogramFunction = document.getElementById('editMiniprogramFunction');
+        const editDevelopmentStatus = document.getElementById('editDevelopmentStatus');
+        const editDeploymentLocation = document.getElementById('editDeploymentLocation');
+        
+        const editBackendDomain = document.getElementById('editBackendDomain');
+        const editProductOwner = document.getElementById('editProductOwner');
+        const editDevOwner = document.getElementById('editDevOwner');
+        const editStatus = document.getElementById('editStatus');
+        const editNotes = document.getElementById('editNotes');
+        
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+        let currentDeleteId = null;
+        let currentPermanentDeleteId = null;
+        let currentView = "active";
+        let currentPage = 1;
+        let currentPageSize = 20;
+
+        // Chart instances
+        let typeChart = null;
+        let teamChart = null;
+        let statusChart = null;
+
+        // Format functions
+        function formatStatus(status) {
+            const map = {
+                'developing': '开发中',
+                'launched': '已上线',
+                'offline': '已下线', 
+                'paused': '暂停维护'
+            };
+            return map[status] || status;
+        }
+
+        function getStatusClass(status) {
+            const map = {
+                'developing': 'status-developing',
+                'launched': 'status-launched',
+                'offline': 'status-offline',
+                'paused': 'status-paused'
+            };
+            return map[status] || 'status-developing';
+        }
+
+        function formatAppType(appType) {
+            const map = {
+                'app': 'APP',
+                'miniprogram': '小程序'
+            };
+            return map[appType] || appType;
+        }
+
+        function getAppTypeClass(appType) {
+            const map = {
+                'app': 'type-app',
+                'miniprogram': 'type-miniprogram'
+            };
+            return map[appType] || 'type-app';
+        }
+
+        // Toggle form fields based on app type
+        function toggleFormFields() {
+            if (appTypeSelect.value === 'miniprogram') {
+                appFields.style.display = 'none';
+                miniprogramFields.style.display = 'block';
+                appNameInput.required = false;
+                teamOrInstitutionInput.required = false;
+                miniprogramNameInput.required = true;
+                miniprogramInstitutionInput.required = true;
+                submitBtn.disabled = false;
+            } else if (appTypeSelect.value === 'app') {
+                appFields.style.display = 'block';
+                miniprogramFields.style.display = 'none';
+                appNameInput.required = true;
+                teamOrInstitutionInput.required = true;
+                miniprogramNameInput.required = false;
+                miniprogramInstitutionInput.required = false;
+                submitBtn.disabled = false;
+            } else {
+                appFields.style.display = 'none';
+                miniprogramFields.style.display = 'none';
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Toggle edit modal fields based on app type
+        function toggleEditModalFields() {
+            if (editAppType.value === 'miniprogram') {
+                editAppFields.style.display = 'none';
+                editMiniprogramFields.style.display = 'block';
+            } else {
+                editAppFields.style.display = 'block';
+                editMiniprogramFields.style.display = 'none';
+            }
+        }
+
+        // API calls with pagination and showAll option
+        async function fetchApplications(searchParams = {}) {
+            try {
+                const params = new URLSearchParams();
+                if (searchParams.name) params.append("name", searchParams.name);
+                if (searchParams.institution) params.append("institution", searchParams.institution);
+                if (searchParams.appType) params.append("appType", searchParams.appType);
+                params.append("page", currentPage.toString());
+                params.append("limit", currentPageSize.toString());
+                if (showAllToggle.checked) {
+                    params.append("showAll", "true");
+                }
+                
+                let apiUrl = "/api/applications";
+                if (currentView === "offline") {
+                    apiUrl = "/api/applications/offline";
+                }
+                
+                const url = params.toString() ? `${apiUrl}?${params.toString()}` : apiUrl;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("获取数据失败");
+                const result = await response.json();
+                renderTable(result.data, result.pagination);
+                if (currentView === "active") {
+                    renderCharts();
+                    updateStatistics();
+                }
+                return result;
+            } catch (error) {
+                console.error("Error fetching applications:", error);
+                // alert("获取数据失败，请检查服务器是否运行");
+                console.log("Server response check:", await fetch('/api/statistics').then(r => r.json()));
+                return { data: [], pagination: { current_page: 1, per_page: 20, total: 0, total_pages: 1 } };
+            }
+        }
+
+        async function createApplication(application) {
+            try {
+                const response = await fetch('/api/applications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(application)
+                });
+                if (response.status === 409) {
+                    const errorData = await response.json();
+                    if (confirm(errorData.error + '\n\n是否仍要继续添加？')) {
+                        // User wants to proceed despite duplicate
+                        // For now, just show the error
+                        alert('重复的应用无法添加，请修改名称后重试');
+                        return false;
+                    }
+                    return false;
+                }
+                if (!response.ok) throw new Error('登记失败');
+                await fetchApplications();
+                clearForm();
+                return true;
+            } catch (error) {
+                console.error('Error creating application:', error);
+                alert('登记失败：' + error.message);
+                return false;
+            }
+        }
+
+        async function updateApplication(id, application) {
+            try {
+                const response = await fetch(`/api/applications/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(application)
+                });
+                if (!response.ok) throw new Error('更新失败');
+                await fetchApplications();
+                return true;
+            } catch (error) {
+                console.error('Error updating application:', error);
+                alert('更新失败：' + error.message);
+                return false;
+            }
+        }
+
+        async function deleteApplication(id) {
+            try {
+                const response = await fetch(`/api/applications/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('下线失败');
+                await fetchApplications();
+                return true;
+            } catch (error) {
+                console.error('Error deleting application:', error);
+                alert('下线失败：' + error.message);
+                return false;
+            }
+        }
+
+        async function permanentDeleteApplication(id) {
+            try {
+                const response = await fetch(`/api/applications/${id}/permanent`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('永久删除失败');
+                await fetchApplications();
+                return true;
+            } catch (error) {
+                console.error('Error permanently deleting application:', error);
+                alert('永久删除失败：' + error.message);
+                return false;
+            }
+        }
+
+        async function fetchAnalytics(endpoint) {
+            try {
+                const response = await fetch(`/api/analytics/${endpoint}`);
+                if (!response.ok) throw new Error(`Failed to fetch ${endpoint} data`);
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${endpoint} analytics:`, error);
+                return [];
+            }
+        }
+
+        function renderTable(data, pagination) {
+            if (data.length === 0) {
+                dataBody.innerHTML = '';
+                noDataMessage.classList.remove('hidden');
+                paginationContainer.classList.add('hidden');
+                return;
+            }
+            
+            noDataMessage.classList.add('hidden');
+            paginationContainer.classList.remove('hidden');
+            
+            dataBody.innerHTML = data.map((app, index) => {
+                // 计算显示序号（从 1 开始）
+                const displayIndex = index + 1;
+                
+                let name = '';
+                let institution = '';
+                let market = '';
+                let icp = '';
+                let education = '';
+                
+                if (app.app_type === 'app') {
+                    name = app.app_name || '<span class="text-gray-400">未命名</span>';
+                    institution = app.team_or_institution || '<span class="text-gray-400">-</span>';
+                    market = app.app_market || '<span class="text-gray-400">-</span>';
+                    icp = app.app_license_number || '<span class="text-gray-400">-</span>';
+                    education = app.education_filing || '<span class="text-gray-400">-</span>';
+                } else {
+                    name = app.miniprogram_name || '<span class="text-gray-400">未命名</span>';
+                    institution = app.miniprogram_institution || '<span class="text-gray-400">-</span>';
+                    market = app.miniprogram_platform || '<span class="text-gray-400">-</span>';
+                    icp = app.miniprogram_function || '<span class="text-gray-400">-</span>';
+                    education = app.development_status || '<span class="text-gray-400">-</span>';
+                }
+                
+                return `
+                    <tr class="table-row hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all">
+                        <td class="table-cell font-semibold text-gray-900">${displayIndex}</td>
+                        <td class="table-cell">
+                            <span class="type-badge ${getAppTypeClass(app.app_type)}">${formatAppType(app.app_type)}</span>
+                        </td>
+                        <td class="table-cell font-semibold text-gray-900">
+                            ${name}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${institution}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${market}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${icp}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${education}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.backend_domain || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.product_owner || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.dev_owner || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell">
+                            <span class="status-badge ${getStatusClass(app.status)}">${formatStatus(app.status)}</span>
+                        </td>
+                        <td class="table-cell">
+                            <div class="flex gap-2 justify-center">
+                                <button onclick="showEditModal(${app.id})" class="action-btn action-edit" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="showDeleteModal(${app.id})" class="action-btn action-delete" title="下线">
+                                    <i class="fas fa-archive"></i>
+                                </button>
+                                <button onclick="showPermanentDeleteModal(${app.id})" class="action-btn action-permanent-delete" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Update pagination info (only if not showing all)
+            if (!showAllToggle.checked) {
+                currentPageEl.textContent = pagination.current_page;
+                totalPagesEl.textContent = pagination.total_pages;
+                renderPageNumbers(pagination.current_page, pagination.total_pages);
+            } else {
+                // Hide pagination when showing all
+                paginationContainer.classList.add('hidden');
+            }
+        }
+
+        function renderPageNumbers(current, total) {
+            pageNumbersEl.innerHTML = '';
+            if (total <= 7) {
+                // Show all pages
+                for (let i = 1; i <= total; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-item ${i === current ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    pageNumbersEl.appendChild(pageBtn);
+                }
+            } else {
+                // Show first, last, and around current
+                const pagesToShow = [1];
+                if (current > 3) pagesToShow.push('...');
+                for (let i = Math.max(2, current - 2); i <= Math.min(total - 1, current + 2); i++) {
+                    pagesToShow.push(i);
+                }
+                if (current < total - 2) pagesToShow.push('...');
+                pagesToShow.push(total);
+                
+                pagesToShow.forEach(page => {
+                    if (page === '...') {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.className = 'page-item disabled';
+                        ellipsis.textContent = '...';
+                        pageNumbersEl.appendChild(ellipsis);
+                    } else {
+                        const pageBtn = document.createElement('button');
+                        pageBtn.className = `page-item ${page === current ? 'active' : ''}`;
+                        pageBtn.textContent = page;
+                        pageBtn.onclick = () => goToPage(page);
+                        pageNumbersEl.appendChild(pageBtn);
+                    }
+                });
+            }
+            
+            // Update prev/next buttons
+            prevPageBtn.disabled = current <= 1;
+            prevPageBtn.className = `page-item ${current <= 1 ? 'disabled' : ''}`;
+            nextPageBtn.disabled = current >= total;
+            nextPageBtn.className = `page-item ${current >= total ? 'disabled' : ''}`;
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > parseInt(totalPagesEl.textContent)) return;
+            currentPage = page;
+            fetchApplications(getCurrentSearchParams());
+        }
+
+        function getCurrentSearchParams() {
+            return {
+                name: searchNameInput.value.trim(),
+                institution: searchInstitutionInput.value.trim(),
+                appType: searchAppTypeInput.value || undefined
+            };
+        }
+
+        window.showEditModal = async function(id) {
+            try {
+                const response = await fetch(`/api/applications/${id}`);
+                if (!response.ok) throw new Error('加载应用数据失败');
+                const app = await response.json();
+                fillEditModalWithApplication(app);
+                editModalId.value = app.id;
+                editModal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error loading application for edit:', error);
+                alert('加载应用数据失败：' + error.message);
+            }
+        };
+
+        function fillEditModalWithApplication(app) {
+            editAppType.value = app.app_type || 'app';
+            toggleEditModalFields();
+            
+            if (app.app_type === 'app') {
+                editAppName.value = app.app_name || '';
+                editTeamOrInstitution.value = app.team_or_institution || '';
+                editAppMarket.value = app.app_market || '';
+                editAppLicenseNumber.value = app.app_license_number || '';
+                editIcpLicenseNumber.value = app.icp_license_number || '';
+                editEducationFiling.value = app.education_filing || '';
+            } else {
+                editMiniprogramName.value = app.miniprogram_name || '';
+                editMiniprogramInstitution.value = app.miniprogram_institution || '';
+                editMiniprogramPlatform.value = app.miniprogram_platform || '';
+                editMiniprogramFunction.value = app.miniprogram_function || '';
+                editDevelopmentStatus.value = app.development_status || '';
+                editDeploymentLocation.value = app.deployment_location || '';
+            }
+            
+            editBackendDomain.value = app.backend_domain || '';
+            editProductOwner.value = app.product_owner || '';
+            editDevOwner.value = app.dev_owner || '';
+            editStatus.value = app.status || 'launched';
+            editNotes.value = app.notes || '';
+        }
+
+        function clearForm() {
+            appTypeSelect.value = '';
+            toggleFormFields();
+            
+            appNameInput.value = '';
+            teamOrInstitutionInput.value = '';
+            appMarketInput.value = '';
+            appLicenseNumberInput.value = '';
+            icpLicenseNumberInput.value = '';
+            educationFilingInput.value = '';
+            
+            miniprogramNameInput.value = '';
+            miniprogramInstitutionInput.value = '';
+            miniprogramPlatformInput.value = '';
+            miniprogramFunctionInput.value = '';
+            developmentStatusInput.value = '';
+            deploymentLocationInput.value = '';
+            
+            backendDomainInput.value = '';
+            productOwnerInput.value = '';
+            devOwnerInput.value = '';
+            statusSelect.value = 'launched';
+            notesInput.value = '';
+            editIdInput.value = '';
+        }
+
+        window.showDeleteModal = function(id) {
+            currentDeleteId = id;
+            deleteModal.classList.remove('hidden');
+        };
+
+        window.showPermanentDeleteModal = function(id) {
+            currentPermanentDeleteId = id;
+            permanentDeleteModal.classList.remove('hidden');
+        };
+
+        document.getElementById("activeTabBtn").addEventListener("click", function() {
+            if (currentView !== "active") {
+                currentView = "active";
+                currentPage = 1;
+                updateTabButtons();
+                fetchApplications();
+            }
+        });
+        
+        document.getElementById("offlineTabBtn").addEventListener("click", function() {
+            if (currentView !== "offline") {
+                currentView = "offline";
+                currentPage = 1;
+                updateTabButtons();
+                fetchApplications();
+            }
+        });
+        
+        function updateTabButtons() {
+            const activeBtn = document.getElementById("activeTabBtn");
+            const offlineBtn = document.getElementById("offlineTabBtn");
+            
+            if (currentView === "active") {
+                activeBtn.className = "px-8 py-3 text-base font-semibold tab-active rounded-l-xl hover:bg-blue-700 focus:z-10 transition-all";
+                offlineBtn.className = "px-8 py-3 text-base font-semibold tab-inactive rounded-r-xl hover:bg-gray-100 focus:z-10 transition-all";
+            } else {
+                activeBtn.className = "px-8 py-3 text-base font-semibold tab-inactive rounded-l-xl hover:bg-gray-100 focus:z-10 transition-all";
+                offlineBtn.className = "px-8 py-3 text-base font-semibold tab-active rounded-r-xl hover:bg-blue-700 focus:z-10 transition-all";
+            }
+        }
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            currentDeleteId = null;
+        });
+
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (currentDeleteId) {
+                const success = await deleteApplication(currentDeleteId);
+                if (success) {
+                    deleteModal.classList.add('hidden');
+                    alert('应用已成功标记为下线！');
+                }
+                currentDeleteId = null;
+            }
+        });
+
+        cancelPermanentDeleteBtn.addEventListener('click', () => {
+            permanentDeleteModal.classList.add('hidden');
+            currentPermanentDeleteId = null;
+        });
+
+        confirmPermanentDeleteBtn.addEventListener('click', async () => {
+            if (currentPermanentDeleteId) {
+                if (confirm('再次确认：您确定要永久删除此记录吗？此操作无法撤销！')) {
+                    const success = await permanentDeleteApplication(currentPermanentDeleteId);
+                    if (success) {
+                        permanentDeleteModal.classList.add('hidden');
+                        alert('应用已永久删除！');
+                    }
+                }
+                currentPermanentDeleteId = null;
+            }
+        });
+
+        // Toggle registration form visibility
+        addApplicationBtn.addEventListener('click', function() {
+            if (registrationFormCard.classList.contains('hidden')) {
+                registrationFormCard.classList.remove('hidden');
+                addApplicationBtn.innerHTML = '<i class="fas fa-minus mr-3"></i> 收起登记表单';
+            } else {
+                registrationFormCard.classList.add('hidden');
+                addApplicationBtn.innerHTML = '<i class="fas fa-plus mr-3"></i> 添加新应用';
+            }
+        });
+
+        submitBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const application = {
+                appType: appTypeSelect.value,
+                backendDomain: backendDomainInput.value,
+                productOwner: productOwnerInput.value,
+                devOwner: devOwnerInput.value,
+                notes: notesInput.value,
+                status: statusSelect.value
+            };
+            
+            if (appTypeSelect.value === 'app') {
+                application.appName = appNameInput.value;
+                application.teamOrInstitution = teamOrInstitutionInput.value;
+                application.appMarket = appMarketInput.value;
+                application.appLicenseNumber = appLicenseNumberInput.value;
+                application.icpLicenseNumber = icpLicenseNumberInput.value;
+                application.educationFiling = educationFilingInput.value;
+            } else {
+                application.miniprogramName = miniprogramNameInput.value;
+                application.miniprogramInstitution = miniprogramInstitutionInput.value;
+                application.miniprogramPlatform = miniprogramPlatformInput.value;
+                application.miniprogramFunction = miniprogramFunctionInput.value;
+                application.developmentStatus = developmentStatusInput.value;
+                application.deploymentLocation = deploymentLocationInput.value;
+            }
+            
+            const success = await createApplication(application);
+            if (success) {
+                registrationFormCard.classList.add('hidden');
+                addApplicationBtn.innerHTML = '<i class="fas fa-plus mr-3"></i> 添加新应用';
+                alert('应用登记成功！');
+            }
+        });
+
+        clearFormBtn.addEventListener('click', clearForm);
+
+        exportBtn.addEventListener('click', function() {
+            window.location.href = '/api/export';
+        });
+
+        appTemplateBtn.addEventListener('click', function() {
+            window.location.href = '/api/template/app';
+        });
+
+        miniprogramTemplateBtn.addEventListener('click', function() {
+            window.location.href = '/api/template/miniprogram';
+        });
+
+        importFileInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                // Show import result in modal
+                let resultHtml = `<p class="mb-4"><strong>导入结果:</strong> ${result.message}</p>`;
+                
+                if (result.duplicateList && result.duplicateList.length > 0) {
+                    resultHtml += `<div class="mb-4"><strong>重复记录 (${result.duplicates} 条):</strong><ul class="mt-2 ml-4">`;
+                    result.duplicateList.forEach(dup => {
+                        resultHtml += `<li>第${dup.row}行: "${dup.name}" (已存在 ID: ${dup.existingId})</li>`;
+                    });
+                    resultHtml += `</ul></div>`;
+                }
+                
+                if (result.errorList && result.errorList.length > 0) {
+                    resultHtml += `<div class="mb-4"><strong>错误记录 (${result.errors} 条):</strong><ul class="mt-2 ml-4">`;
+                    result.errorList.forEach(err => {
+                        resultHtml += `<li>${err}</li>`;
+                    });
+                    resultHtml += `</ul></div>`;
+                }
+                
+                document.getElementById('importResultContent').innerHTML = resultHtml;
+                importResultModal.classList.remove('hidden');
+                
+                if (response.ok || response.status === 207) {
+                    fetchApplications();
+                }
+            } catch (error) {
+                console.error('Import error:', error);
+                alert('导入过程中发生错误: ' + error.message);
+            }
+            
+            e.target.value = '';
+        });
+
+        closeImportResultBtn.addEventListener('click', () => {
+            importResultModal.classList.add('hidden');
+        });
+
+        searchBtn.addEventListener('click', function() {
+            currentPage = 1;
+            fetchApplications(getCurrentSearchParams());
+        });
+
+        clearSearchBtn.addEventListener('click', function() {
+            searchNameInput.value = '';
+            searchInstitutionInput.value = '';
+            searchAppTypeInput.value = '';
+            currentPage = 1;
+            fetchApplications();
+        });
+
+        searchNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                fetchApplications(getCurrentSearchParams());
+            }
+        });
+
+        searchInstitutionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                fetchApplications(getCurrentSearchParams());
+            }
+        });
+
+        // Pagination event listeners
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchApplications(getCurrentSearchParams());
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < parseInt(totalPagesEl.textContent)) {
+                currentPage++;
+                fetchApplications(getCurrentSearchParams());
+            }
+        });
+
+        pageSizeSelect.addEventListener('change', () => {
+            currentPageSize = parseInt(pageSizeSelect.value);
+            currentPage = 1;
+            fetchApplications(getCurrentSearchParams());
+        });
+
+        showAllToggle.addEventListener('change', () => {
+            currentPage = 1;
+            fetchApplications(getCurrentSearchParams());
+        });
+
+        // Update statistics
+        async function updateStatistics() {
+            try {
+                const response = await fetch('/api/statistics');
+                if (!response.ok) throw new Error('Failed to fetch statistics');
+                const stats = await response.json();
+                
+                document.getElementById('appCount').textContent = stats.appCount || 0;
+                document.getElementById('miniprogramCount').textContent = stats.miniprogramCount || 0;
+                document.getElementById('institutionCount').textContent = stats.institutionCount || 0;
+            } catch (error) {
+                console.error('Error fetching statistics:', error);
+            }
+        }
+
+        refreshChartsBtn.addEventListener('click', renderCharts);
+
+        function renderCharts() {
+            fetchAnalytics('type').then(data => {
+                const ctx = document.getElementById('typeChart').getContext('2d');
+                if (typeChart) typeChart.destroy();
+                if (data.length > 0) {
+                    typeChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.map(item => item.type),
+                            datasets: [{
+                                data: data.map(item => item.count),
+                                backgroundColor: ['#3B82F6', '#10B981'],
+                                borderColor: ['#2563EB', '#059669'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1F2937'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.fillStyle = '#6B7280';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('暂无数据', ctx.canvas.width/2, ctx.canvas.height/2);
+                }
+            });
+
+            fetchAnalytics('team').then(data => {
+                const top5 = data.slice(0, 5);
+                const ctx = document.getElementById('teamChart').getContext('2d');
+                if (teamChart) teamChart.destroy();
+                if (top5.length > 0) {
+                    teamChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: top5.map(item => item.institution),
+                            datasets: [{
+                                label: '应用数量',
+                                data: top5.map(item => item.count),
+                                backgroundColor: '#3B82F6',
+                                borderColor: '#2563EB',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0,
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1F2937'
+                                    },
+                                    grid: {
+                                        color: '#E5E7EB'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1F2937'
+                                    },
+                                    grid: {
+                                        color: '#E5E7EB'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.fillStyle = '#6B7280';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('暂无数据', ctx.canvas.width/2, ctx.canvas.height/2);
+                }
+            });
+
+            fetchAnalytics('status').then(data => {
+                const ctx = document.getElementById('statusChart').getContext('2d');
+                if (statusChart) statusChart.destroy();
+                if (data.length > 0) {
+                    statusChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.map(item => item.status),
+                            datasets: [{
+                                label: '应用数量',
+                                data: data.map(item => item.count),
+                                backgroundColor: '#10B981',
+                                borderColor: '#059669',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0,
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1F2937'
+                                    },
+                                    grid: {
+                                        color: '#E5E7EB'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            size: 12
+                                        },
+                                        color: '#1F2937'
+                                    },
+                                    grid: {
+                                        color: '#E5E7EB'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.fillStyle = '#6B7280';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('暂无数据', ctx.canvas.width/2, ctx.canvas.height/2);
+                }
+            });
+        }
+
+        // Event listeners for form field toggling
+        appTypeSelect.addEventListener('change', toggleFormFields);
+        editAppType.addEventListener('change', toggleEditModalFields);
+        
+        // Close edit modal
+        closeEditModalBtn.addEventListener('click', () => {
+            editModal.classList.add('hidden');
+        });
+        
+        cancelEditBtn.addEventListener('click', () => {
+            editModal.classList.add('hidden');
+        });
+        
+        saveEditBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const application = {
+                appType: editAppType.value,
+                backendDomain: editBackendDomain.value,
+                productOwner: editProductOwner.value,
+                devOwner: editDevOwner.value,
+                notes: editNotes.value,
+                status: editStatus.value
+            };
+            
+            if (editAppType.value === 'app') {
+                application.appName = editAppName.value;
+                application.teamOrInstitution = editTeamOrInstitution.value;
+                application.appMarket = editAppMarket.value;
+                application.appLicenseNumber = editAppLicenseNumber.value;
+                application.icpLicenseNumber = editIcpLicenseNumber.value;
+                application.educationFiling = editEducationFiling.value;
+            } else {
+                application.miniprogramName = editMiniprogramName.value;
+                application.miniprogramInstitution = editMiniprogramInstitution.value;
+                application.miniprogramPlatform = editMiniprogramPlatform.value;
+                application.miniprogramFunction = editMiniprogramFunction.value;
+                application.developmentStatus = editDevelopmentStatus.value;
+                application.deploymentLocation = editDeploymentLocation.value;
+            }
+            
+            const id = editModalId.value;
+            const success = await updateApplication(id, application);
+            if (success) {
+                editModal.classList.add('hidden');
+                alert('应用信息更新成功！');
+            }
+        });
+
+        // Load initial data
+        fetchApplications();
+    </script>
+</body>
+</html>
