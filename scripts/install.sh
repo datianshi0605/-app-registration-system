@@ -51,6 +51,12 @@ npm install --production
 echo "🗄️  初始化数据库..."
 node scripts/init-database.js
 
+if [ $? -ne 0 ]; then
+    echo "❌ 数据库初始化失败"
+    exit 1
+fi
+echo "✓ 数据库初始化完成"
+
 # 创建日志目录
 sudo mkdir -p /var/log/app-registration-system
 sudo chown $USER:$USER /var/log/app-registration-system
@@ -73,4 +79,6 @@ echo "  sudo systemctl start app-registration"
 echo ""
 echo "访问地址：http://localhost:3000"
 echo "局域网访问：http://<your-ip>:3000"
+echo ""
+echo "📝 提示：首次启动后请导入 Excel 数据"
 echo ""
