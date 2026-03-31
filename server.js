@@ -889,6 +889,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public-merged-modern-popup', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Modern APP/MiniProgram system with popup editing running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Modern APP/MiniProgram system with popup editing running on http://0.0.0.0:${PORT}`);
+  console.log(`Local access: http://localhost:${PORT}`);
+  console.log(`Network access: http://<your-ip>:${PORT}`);
 });
