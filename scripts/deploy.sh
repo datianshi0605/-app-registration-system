@@ -13,19 +13,19 @@ if ! command -v node &> /dev/null; then
     # 检测操作系统
     if [ -f /etc/debian_version ]; then
         # Debian/Ubuntu
-        echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 18.x..."
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+        echo "检测到 Debian/Ubuntu 系统，正在安装 Node.js 20.x (LTS)..."
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
         sudo apt-get install -y nodejs
     elif [ -f /etc/redhat-release ]; then
         # CentOS/RHEL
-        echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 18.x..."
-        curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+        echo "检测到 CentOS/RHEL 系统，正在安装 Node.js 20.x (LTS)..."
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
         sudo yum install -y nodejs
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
         echo "检测到 macOS 系统"
         if command -v brew &> /dev/null; then
-            echo "使用 Homebrew 安装 Node.js..."
+            echo "使用 Homebrew 安装 Node.js (最新版)..."
             brew install node
         else
             echo "❌ 未检测到 Homebrew，请先安装："
