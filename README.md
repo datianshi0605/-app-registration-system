@@ -23,7 +23,7 @@ cd -app-registration-system
 npm start
 ```
 
-访问 http://localhost:9999
+访问 http://localhost:3000
 
 ### 📦 部署内容
 
@@ -50,11 +50,11 @@ npm start
 修改方法：
 ```bash
 # 方法 1: 环境变量
-export PORT=9999
+export PORT=3000
 npm start
 
 # 方法 2: 修改 .env 文件
-PORT=9999
+PORT=3000
 ```
 
 ### 数据库
@@ -90,7 +90,7 @@ sudo journalctl -u app-registration -f
 
 创建 `Dockerfile`:
 ```dockerfile
-FROM node:18-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 COPY package*.json ./
@@ -98,14 +98,14 @@ RUN npm install --production
 
 COPY . .
 
-EXPOSE 9999
+EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
 构建和运行：
 ```bash
 docker build -t app-registration .
-docker run -d -p 9999:9999 -v $(pwd)/data:/app/data app-registration
+docker run -d -p 3000:3000 -v $(pwd)/data:/app/data app-registration
 ```
 
 ### Nginx 反向代理
@@ -116,7 +116,7 @@ server {
     server_name your-domain.com;
 
     location / {
-        proxy_pass http://localhost:9999;
+        proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -151,7 +151,7 @@ cp apps.db.backup.20260331 apps.db
 1. **防火墙配置**
    ```bash
    # 只允许特定 IP 访问
-   sudo ufw allow from 192.168.1.0/24 to any port 9999
+   sudo ufw allow from 192.168.1.0/24 to any port 3000
    ```
 
 2. **使用 HTTPS**
@@ -206,7 +206,7 @@ GET /api/statistics
 ### 端口被占用
 ```bash
 # 查看占用端口的进程
-lsof -i :9999
+lsof -i :3000
 
 # 杀死进程
 kill -9 <PID>
