@@ -18,7 +18,7 @@ if (!fs.existsSync('uploads')) {
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public-merged-modern-popup')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize database with separate fields for APP and MiniProgram
 const db = new sqlite3.Database('./unified-apps.db', (err) => {
