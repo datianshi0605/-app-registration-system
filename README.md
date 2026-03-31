@@ -13,8 +13,8 @@
 
 ```bash
 # 1. 克隆项目
-git clone <your-repo-url>
-cd app-registration-system
+git clone https://github.com/datianshi0605/-app-registration-system.git
+cd -app-registration-system
 
 # 2. 运行部署脚本（自动安装依赖 + 初始化数据库）
 ./scripts/deploy.sh
