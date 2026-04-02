@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 一键启动脚本 - 包含数据库初始化和服务器启动
+# 一键启动脚本 - 完整流程：安装依赖 → 安装数据库驱动 → 初始化数据库 → 启动服务器
 
 echo "🚀 小程序登记系统 - 一键启动"
 echo "================================"
@@ -13,25 +13,30 @@ fi
 
 echo "✅ Node.js 版本：$(node -v)"
 
-# 检查依赖是否已安装
-if [ ! -d "node_modules" ]; then
-    echo "📦 首次运行，正在安装依赖..."
+# 安装依赖（包括 sqlite3 数据库驱动）
+echo ""
+echo "📦 正在安装依赖（包括 SQLite 数据库驱动）..."
+npm install
+
+if [ $? -ne 0 ]; then
+    echo "❌ 依赖安装失败，尝试重新安装 sqlite3..."
+    npm rebuild sqlite3
     npm install
-    if [ $? -ne 0 ]; then
-        echo "❌ 依赖安装失败"
-        exit 1
-    fi
-    echo "✅ 依赖安装完成"
 fi
+
+echo "✅ 依赖安装完成"
 
 # 初始化数据库
 echo ""
 echo "🗄️  正在初始化数据库..."
 node init-db.js
+
 if [ $? -ne 0 ]; then
     echo "❌ 数据库初始化失败"
     exit 1
 fi
+
+echo "✅ 数据库初始化完成"
 
 # 启动服务器
 echo ""
