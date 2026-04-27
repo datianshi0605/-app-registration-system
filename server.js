@@ -921,6 +921,135 @@ app.get('*', (req, res) => {
 
 // Update management endpoints
 const { exec } = require('child_process');
+const AdmZip = require('adm-zip');
+
+// Upload update package
+app.post('/api/update/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.json({ success: false, error: '未上传文件' });
+  }
+
+  const logs = [];
+  const updateCode = req.body.updateCode === 'true';
+  const updateDb = req.body.updateDb === 'true';
+  const installDeps = req.body.installDeps === 'true';
+
+  try {
+    const zip = new AdmZip(req.file.path);
+    const entries = zip.getEntries();
+
+    // Find the root folder in zip (GitHub adds a folder like repo-master/)
+    let zipRoot = '';
+    for (const entry of entries) {
+      if (entry.entryName.endsWith('/server.js')) {
+        zipRoot = entry.entryName.replace('server.js', '');
+        break;
+      }
+    }
+
+    if (updateCode) {
+      // Extract server.js
+      const serverEntry = entries.find(e => e.entryName === zipRoot + 'server.js');
+      if (serverEntry) {
+        fs.writeFileSync(path.join(__dirname, 'server.js'), serverEntry.getData());
+        logs.push({ type: 'success', message: 'server.js 已更新' });
+      } else {
+        logs.push({ type: 'warning', message: '未找到 server.js' });
+      }
+
+      // Extract public/index.html
+      const indexEntry = entries.find(e => e.entryName === zipRoot + 'public/index.html');
+      if (indexEntry) {
+        if (!fs.existsSync(path.join(__dirname, 'public'))) {
+          fs.mkdirSync(path.join(__dirname, 'public'), { recursive: true });
+        }
+        fs.writeFileSync(path.join(__dirname, 'public', 'index.html'), indexEntry.getData());
+        logs.push({ type: 'success', message: 'public/index.html 已更新' });
+      }
+
+      // Extract public/update.html
+      const updateEntry = entries.find(e => e.entryName === zipRoot + 'public/update.html');
+      if (updateEntry) {
+        fs.writeFileSync(path.join(__dirname, 'public', 'update.html'), updateEntry.getData());
+        logs.push({ type: 'success', message: 'public/update.html 已更新' });
+      }
+
+      // Extract package.json
+      const pkgEntry = entries.find(e => e.entryName === zipRoot + 'package.json');
+      if (pkgEntry) {
+        fs.writeFileSync(path.join(__dirname, 'package.json'), pkgEntry.getData());
+        logs.push({ type: 'success', message: 'package.json 已更新' });
+      }
+
+      // Extract init-db.js
+      const initDbEntry = entries.find(e => e.entryName === zipRoot + 'init-db.js');
+      if (initDbEntry) {
+        fs.writeFileSync(path.join(__dirname, 'init-db.js'), initDbEntry.getData());
+        logs.push({ type: 'success', message: 'init-db.js 已更新' });
+      }
+
+      // Extract install.sh, start.sh
+      ['install.sh', 'start.sh'].forEach(f => {
+        const entry = entries.find(e => e.entryName === zipRoot + f);
+        if (entry) {
+          fs.writeFileSync(path.join(__dirname, f), entry.getData());
+          fs.chmodSync(path.join(__dirname, f), '755');
+          logs.push({ type: 'success', message: `${f} 已更新` });
+        }
+      });
+    }
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    // Install deps if requested
+    if (installDeps) {
+      logs.push({ type: 'info', message: '正在安装依赖...' });
+      exec('npm install --production', { cwd: __dirname }, (err) => {
+        if (err) {
+          logs.push({ type: 'error', message: '依赖安装失败: ' + err.message });
+        } else {
+          logs.push({ type: 'success', message: '依赖安装完成' });
+        }
+
+        if (updateDb) {
+          runDbMigration(logs, () => res.json({ success: true, logs }));
+        } else {
+          res.json({ success: true, logs });
+        }
+      });
+    } else if (updateDb) {
+      runDbMigration(logs, () => res.json({ success: true, logs }));
+    } else {
+      res.json({ success: true, logs });
+    }
+  } catch (error) {
+    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+    res.json({ success: false, error: '解压失败: ' + error.message });
+  }
+});
+
+function runDbMigration(logs, callback) {
+  db.run(`CREATE TABLE IF NOT EXISTS applications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_type TEXT NOT NULL DEFAULT 'app' CHECK(app_type IN ('app', 'miniprogram')),
+    app_name TEXT, team_or_institution TEXT, app_market TEXT,
+    app_license_number TEXT, icp_license_number TEXT, education_filing TEXT,
+    miniprogram_name TEXT, miniprogram_institution TEXT, miniprogram_platform TEXT,
+    miniprogram_function TEXT, development_status TEXT, deployment_location TEXT,
+    backend_domain TEXT, product_owner TEXT, dev_owner TEXT, notes TEXT,
+    status TEXT NOT NULL DEFAULT 'launched' CHECK(status IN ('developing', 'launched', 'offline', 'paused')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) {
+      logs.push({ type: 'error', message: '数据库更新失败: ' + err.message });
+    } else {
+      logs.push({ type: 'success', message: '数据库结构已同步' });
+    }
+    callback();
+  });
+}
 
 app.post('/api/update/pull', (req, res) => {
   exec('git pull', { cwd: __dirname }, (error, stdout, stderr) => {

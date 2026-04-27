@@ -7,9 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -25,10 +23,9 @@
             padding: 1.5rem 2rem;
             border-bottom: 2px solid #f3f4f6;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px 16px 0 0;
         }
-        .card-body {
-            padding: 2rem;
-        }
+        .card-body { padding: 2rem; }
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
@@ -41,103 +38,46 @@
             gap: 0.5rem;
             border: 2px solid transparent;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            color: white;
-        }
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #065f46 100%);
-        }
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-        }
-        .btn-warning:hover {
-            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-        }
-        .btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-        }
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .btn-secondary { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #e5e7eb;
-            transition: .4s;
-            border-radius: 34px;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #e5e7eb; transition: .4s; border-radius: 34px;
         }
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 22px; width: 22px;
+            left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;
         }
-        input:checked + .slider {
-            background-color: #10b981;
-        }
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(30px); }
         .log-output {
-            background: #1f2937;
-            color: #10b981;
-            font-family: 'Courier New', monospace;
-            padding: 1.5rem;
-            border-radius: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-size: 0.875rem;
-            line-height: 1.6;
+            background: #1f2937; color: #10b981; font-family: 'Courier New', monospace;
+            padding: 1.5rem; border-radius: 12px; max-height: 400px; overflow-y: auto;
+            font-size: 0.875rem; line-height: 1.6;
+        }
+        .upload-zone {
+            border: 3px dashed #d1d5db; border-radius: 16px; padding: 3rem;
+            text-align: center; transition: all 0.3s ease; cursor: pointer;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #3b82f6; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         }
         .status-badge {
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; font-weight: 600;
         }
-        .status-success {
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            color: #166534;
-        }
-        .status-warning {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%);
-            color: #92400e;
-        }
-        .status-info {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1e40af;
-        }
+        .status-success { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; }
+        .status-warning { background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%); color: #92400e; }
+        .status-info { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e40af; }
+        .tab-btn { padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .tab-btn.active { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; }
+        .tab-btn:not(.active) { background: #f3f4f6; color: #4b5563; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -147,7 +87,10 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-3">
                 <i class="fas fa-sync-alt text-blue-600 mr-3"></i>系统更新管理
             </h1>
-            <p class="text-lg text-gray-600">一键更新系统代码和数据库，安全可控</p>
+            <p class="text-lg text-gray-600">选择适合你的更新方式，安全可控</p>
+            <a href="/" class="inline-block mt-3 text-blue-600 hover:text-blue-800 font-medium">
+                <i class="fas fa-arrow-left mr-1"></i> 返回主页
+            </a>
         </div>
 
         <!-- Current Version Info -->
@@ -173,90 +116,183 @@
             </div>
         </div>
 
-        <!-- Update Options -->
-        <div class="card fade-in">
+        <!-- Update Mode Tabs -->
+        <div class="flex gap-4 mb-6 justify-center fade-in">
+            <button class="tab-btn active" onclick="switchTab('upload')">
+                <i class="fas fa-upload mr-2"></i>上传更新包
+            </button>
+            <button class="tab-btn" onclick="switchTab('git')">
+                <i class="fab fa-github mr-2"></i>Git 在线更新
+            </button>
+        </div>
+
+        <!-- Tab 1: Upload Update -->
+        <div id="uploadTab" class="card fade-in">
             <div class="card-header">
-                <h2 class="text-xl font-bold text-gray-900">⚙️ 更新选项</h2>
+                <h2 class="text-xl font-bold text-gray-900">📦 上传更新包</h2>
+                <p class="text-gray-500 text-sm mt-1">适用于无法连接 GitHub 的环境</p>
             </div>
             <div class="card-body">
-                <div class="space-y-6">
-                    <!-- Code Update -->
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-code text-blue-600 text-xl"></i>
-                            </div>
+                <!-- Step Guide -->
+                <div class="mb-8 p-4 bg-blue-50 rounded-xl">
+                    <h3 class="font-bold text-blue-900 mb-3"><i class="fas fa-info-circle mr-2"></i>使用步骤</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">1</div>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">更新系统代码</h3>
-                                <p class="text-gray-600 text-sm">从 GitHub 拉取最新代码</p>
+                                <p class="font-bold text-blue-900">下载更新包</p>
+                                <p class="text-blue-700 text-sm">在能上网的电脑上下载 ZIP</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                            <div>
+                                <p class="font-bold text-blue-900">上传到系统</p>
+                                <p class="text-blue-700 text-sm">拖拽或选择 ZIP 文件</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                            <div>
+                                <p class="font-bold text-blue-900">确认更新</p>
+                                <p class="text-blue-700 text-sm">选择选项后一键更新</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Link -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-gray-900">📥 下载最新版本</p>
+                        <p class="text-gray-500 text-sm">在能上网的电脑上打开此链接下载 ZIP</p>
+                    </div>
+                    <a href="https://github.com/datianshi0605/-app-registration-system/archive/refs/heads/master.zip"
+                       target="_blank" class="btn btn-primary">
+                        <i class="fas fa-download mr-2"></i>GitHub 下载
+                    </a>
+                </div>
+
+                <!-- Upload Zone -->
+                <div id="uploadZone" class="upload-zone mb-6"
+                     ondragover="event.preventDefault(); this.classList.add('dragover')"
+                     ondragleave="this.classList.remove('dragover')"
+                     ondrop="handleDrop(event)">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                    <p class="text-xl font-bold text-gray-700 mb-2">拖拽 ZIP 文件到这里</p>
+                    <p class="text-gray-500 mb-4">或者点击选择文件</p>
+                    <label class="btn btn-primary cursor-pointer">
+                        <i class="fas fa-folder-open mr-2"></i>选择文件
+                        <input type="file" id="updateFile" accept=".zip" class="hidden" onchange="handleFileSelect(this)">
+                    </label>
+                    <p id="selectedFile" class="mt-4 text-gray-600 hidden">
+                        <i class="fas fa-file-archive text-blue-600 mr-2"></i>
+                        <span id="selectedFileName"></span>
+                        <span id="selectedFileSize" class="text-gray-400 ml-2"></span>
+                    </p>
+                </div>
+
+                <!-- Update Options -->
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-code text-blue-600 text-xl"></i>
+                            <div>
+                                <p class="font-bold text-gray-900">更新代码文件</p>
+                                <p class="text-gray-500 text-sm">替换 server.js 和前端页面</p>
                             </div>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="updateCode" checked>
+                            <input type="checkbox" id="uploadUpdateCode" checked>
                             <span class="slider"></span>
                         </label>
                     </div>
-
-                    <!-- Database Update -->
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-database text-green-600 text-xl"></i>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-database text-green-600 text-xl"></i>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">更新数据库结构</h3>
-                                <p class="text-gray-600 text-sm">同步最新表结构（不影响现有数据）</p>
+                                <p class="font-bold text-gray-900">更新数据库结构</p>
+                                <p class="text-gray-500 text-sm">同步最新表结构（保留现有数据）</p>
                             </div>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="updateDatabase">
+                            <input type="checkbox" id="uploadUpdateDb">
                             <span class="slider"></span>
                         </label>
                     </div>
-
-                    <!-- Install Dependencies -->
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-box text-purple-600 text-xl"></i>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-box text-purple-600 text-xl"></i>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">安装依赖</h3>
-                                <p class="text-gray-600 text-sm">更新 npm 依赖包</p>
+                                <p class="font-bold text-gray-900">重新安装依赖</p>
+                                <p class="text-gray-500 text-sm">更新 npm 依赖包（更新 package.json 后需要）</p>
                             </div>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="installDeps" checked>
+                            <input type="checkbox" id="uploadInstallDeps">
                             <span class="slider"></span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="flex gap-4 mt-8 pt-6 border-t border-gray-200">
-                    <button id="startUpdateBtn" class="btn btn-primary flex-1 justify-center text-lg">
-                        <i class="fas fa-play mr-2"></i> 开始更新
-                    </button>
-                    <button id="restartBtn" class="btn btn-warning flex-1 justify-center text-lg hidden">
-                        <i class="fas fa-redo mr-2"></i> 重启服务
-                    </button>
-                </div>
+                <button id="uploadUpdateBtn" class="btn btn-success w-full justify-center text-lg" onclick="startUploadUpdate()" disabled>
+                    <i class="fas fa-rocket mr-2"></i>开始更新
+                </button>
+            </div>
+        </div>
 
-                <!-- Warning Notice -->
-                <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-xl">
-                    <div class="flex items-start gap-3">
-                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mt-0.5"></i>
-                        <div>
-                            <h4 class="font-bold text-yellow-800 mb-1">注意事项</h4>
-                            <ul class="text-yellow-700 text-sm space-y-1">
-                                <li>• 更新代码不会影响现有数据</li>
-                                <li>• 数据库结构更新会保留所有数据</li>
-                                <li>• 建议更新后重启服务以应用更改</li>
-                                <li>• 更新过程中请勿关闭页面</li>
-                            </ul>
+        <!-- Tab 2: Git Update -->
+        <div id="gitTab" class="card fade-in hidden">
+            <div class="card-header">
+                <h2 class="text-xl font-bold text-gray-900"><i class="fab fa-github mr-2"></i>Git 在线更新</h2>
+                <p class="text-gray-500 text-sm mt-1">适用于能连接 GitHub 的环境</p>
+            </div>
+            <div class="card-body">
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-code text-blue-600 text-xl"></i>
+                            <div>
+                                <p class="font-bold text-gray-900">拉取最新代码</p>
+                                <p class="text-gray-500 text-sm">git pull 从 GitHub 获取更新</p>
+                            </div>
                         </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gitUpdateCode" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-database text-green-600 text-xl"></i>
+                            <div>
+                                <p class="font-bold text-gray-900">更新数据库结构</p>
+                                <p class="text-gray-500 text-sm">同步最新表结构（保留现有数据）</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gitUpdateDb">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-box text-purple-600 text-xl"></i>
+                            <div>
+                                <p class="font-bold text-gray-900">安装依赖</p>
+                                <p class="text-gray-500 text-sm">npm install 更新依赖包</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gitInstallDeps" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
+
+                <button id="gitUpdateBtn" class="btn btn-primary w-full justify-center text-lg" onclick="startGitUpdate()">
+                    <i class="fas fa-play mr-2"></i>开始在线更新
+                </button>
             </div>
         </div>
 
@@ -271,183 +307,189 @@
             <div class="card-body">
                 <div id="logOutput" class="log-output">等待开始更新...</div>
                 <div class="mt-4 flex gap-4">
-                    <button id="copyLogBtn" class="btn btn-secondary">
-                        <i class="fas fa-copy mr-2"></i> 复制日志
+                    <button id="restartBtn" class="btn btn-warning hidden" onclick="restartServer()">
+                        <i class="fas fa-redo mr-2"></i>重启服务
                     </button>
-                    <button id="clearLogBtn" class="btn btn-secondary">
-                        <i class="fas fa-trash mr-2"></i> 清空日志
+                    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('logOutput').innerText).then(()=>alert('已复制'))">
+                        <i class="fas fa-copy mr-2"></i>复制日志
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-xl fade-in">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mt-0.5"></i>
+                <div>
+                    <h4 class="font-bold text-yellow-800 mb-1">注意事项</h4>
+                    <ul class="text-yellow-700 text-sm space-y-1">
+                        <li>• 更新代码<strong>不会</strong>影响现有数据</li>
+                        <li>• 数据库结构更新会<strong>保留</strong>所有已有数据</li>
+                        <li>• 更新后建议<strong>重启服务</strong>以应用更改</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_BASE = '/api';
-        let isUpdating = false;
+        let selectedZipFile = null;
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSystemInfo();
-            setupEventListeners();
-        });
-
-        function setupEventListeners() {
-            document.getElementById('startUpdateBtn').addEventListener('click', startUpdate);
-            document.getElementById('restartBtn').addEventListener('click', restartServer);
-            document.getElementById('copyLogBtn').addEventListener('click', copyLog);
-            document.getElementById('clearLogBtn').addEventListener('click', clearLog);
-        }
+        document.addEventListener('DOMContentLoaded', loadSystemInfo);
 
         async function loadSystemInfo() {
             try {
-                // Get package version
-                const pkgRes = await fetch('/package.json');
-                const pkg = await pkgRes.json();
-                document.getElementById('appVersion').textContent = `v${pkg.version}`;
-
-                // Get database stats
-                const statsRes = await fetch(`${API_BASE}/statistics`);
+                const statsRes = await fetch('/api/statistics');
                 const stats = await statsRes.json();
-                const total = stats.appCount + stats.miniprogramCount;
-                document.getElementById('dbCount').textContent = total;
+                document.getElementById('dbCount').textContent = stats.appCount + stats.miniprogramCount;
                 document.getElementById('dbStatus').textContent = '✅ 正常';
-            } catch (error) {
-                console.error('Failed to load system info:', error);
-                document.getElementById('appVersion').textContent = '未知';
+                document.getElementById('appVersion').textContent = 'v2.0.0';
+            } catch (e) {
                 document.getElementById('dbStatus').textContent = '⚠️ 未知';
             }
         }
 
-        function log(message, type = 'info') {
-            const logOutput = document.getElementById('logOutput');
-            const timestamp = new Date().toLocaleTimeString('zh-CN');
-            const colors = {
-                info: '#10b981',
-                warning: '#f59e0b',
-                error: '#ef4444',
-                success: '#3b82f6'
-            };
-            const icon = {
-                info: 'ℹ️',
-                warning: '⚠️',
-                error: '❌',
-                success: '✅'
-            };
-            logOutput.innerHTML += `<div style="color: ${colors[type]}">[${timestamp}] ${icon[type]} ${message}</div>`;
-            logOutput.scrollTop = logOutput.scrollHeight;
-        }
-
-        function clearLog() {
-            document.getElementById('logOutput').innerHTML = '等待开始更新...';
-        }
-
-        function copyLog() {
-            const logText = document.getElementById('logOutput').innerText;
-            navigator.clipboard.writeText(logText).then(() => {
-                alert('日志已复制到剪贴板');
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', (tab === 'upload' && i === 0) || (tab === 'git' && i === 1));
             });
+            document.getElementById('uploadTab').classList.toggle('hidden', tab !== 'upload');
+            document.getElementById('gitTab').classList.toggle('hidden', tab !== 'git');
         }
 
-        async function startUpdate() {
-            if (isUpdating) {
-                alert('更新正在进行中，请稍候...');
-                return;
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.zip')) {
+                setSelectedFile(file);
+            } else {
+                alert('请上传 ZIP 格式的文件');
             }
+        }
 
-            const updateCode = document.getElementById('updateCode').checked;
-            const updateDatabase = document.getElementById('updateDatabase').checked;
-            const installDeps = document.getElementById('installDeps').checked;
+        function handleFileSelect(input) {
+            if (input.files[0]) setSelectedFile(input.files[0]);
+        }
 
-            if (!updateCode && !updateDatabase && !installDeps) {
-                alert('请至少选择一个更新选项');
-                return;
-            }
+        function setSelectedFile(file) {
+            selectedZipFile = file;
+            document.getElementById('selectedFile').classList.remove('hidden');
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('selectedFileSize').textContent = `(${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            document.getElementById('uploadUpdateBtn').disabled = false;
+        }
 
-            isUpdating = true;
+        function log(msg, type = 'info') {
+            const el = document.getElementById('logOutput');
+            const ts = new Date().toLocaleTimeString('zh-CN');
+            const colors = { info: '#10b981', warning: '#f59e0b', error: '#ef4444', success: '#3b82f6' };
+            const icons = { info: 'ℹ️', warning: '⚠️', error: '❌', success: '✅' };
+            el.innerHTML += `<div style="color:${colors[type]}">[${ts}] ${icons[type]} ${msg}</div>`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function showLog() {
             document.getElementById('logCard').classList.remove('hidden');
+            document.getElementById('logOutput').innerHTML = '';
+        }
+
+        async function startUploadUpdate() {
+            if (!selectedZipFile) return alert('请先选择更新包');
+
+            const updateCode = document.getElementById('uploadUpdateCode').checked;
+            const updateDb = document.getElementById('uploadUpdateDb').checked;
+            const installDeps = document.getElementById('uploadInstallDeps').checked;
+
+            if (!updateCode && !updateDb && !installDeps) return alert('请至少选择一个更新选项');
+
+            showLog();
             document.getElementById('updateStatus').textContent = '更新中...';
             document.getElementById('updateStatus').className = 'status-badge status-warning';
-            document.getElementById('startUpdateBtn').disabled = true;
-
-            clearLog();
-            log('开始系统更新...', 'info');
+            document.getElementById('uploadUpdateBtn').disabled = true;
 
             try {
-                // Step 1: Git pull
+                // Upload ZIP
+                log('正在上传更新包...', 'info');
+                const formData = new FormData();
+                formData.append('file', selectedZipFile);
+                formData.append('updateCode', updateCode);
+                formData.append('updateDb', updateDb);
+                formData.append('installDeps', installDeps);
+
+                const res = await fetch('/api/update/upload', { method: 'POST', body: formData });
+                const result = await res.json();
+
+                if (result.success) {
+                    result.logs.forEach(l => log(l.message, l.type));
+                    log('更新完成！', 'success');
+                    document.getElementById('updateStatus').textContent = '✅ 更新完成';
+                    document.getElementById('updateStatus').className = 'status-badge status-success';
+                    document.getElementById('restartBtn').classList.remove('hidden');
+                } else {
+                    log(`更新失败：${result.error}`, 'error');
+                    document.getElementById('updateStatus').textContent = '❌ 更新失败';
+                }
+            } catch (e) {
+                log(`更新出错：${e.message}`, 'error');
+            } finally {
+                document.getElementById('uploadUpdateBtn').disabled = false;
+            }
+        }
+
+        async function startGitUpdate() {
+            const updateCode = document.getElementById('gitUpdateCode').checked;
+            const updateDb = document.getElementById('gitUpdateDb').checked;
+            const installDeps = document.getElementById('gitInstallDeps').checked;
+
+            if (!updateCode && !updateDb && !installDeps) return alert('请至少选择一个更新选项');
+
+            showLog();
+            document.getElementById('updateStatus').textContent = '更新中...';
+            document.getElementById('updateStatus').className = 'status-badge status-warning';
+            document.getElementById('gitUpdateBtn').disabled = true;
+
+            try {
                 if (updateCode) {
                     log('正在从 GitHub 拉取最新代码...', 'info');
-                    const pullRes = await fetch(`${API_BASE}/update/pull`, { method: 'POST' });
-                    const pullResult = await pullRes.json();
-                    
-                    if (pullResult.success) {
-                        log(`代码更新成功：${pullResult.message}`, 'success');
-                    } else {
-                        log(`代码更新失败：${pullResult.error}`, 'error');
-                    }
+                    const r = await fetch('/api/update/pull', { method: 'POST' });
+                    const d = await r.json();
+                    log(d.success ? `代码更新：${d.message}` : `失败：${d.error}`, d.success ? 'success' : 'error');
                 }
-
-                // Step 2: Install dependencies
                 if (installDeps) {
-                    log('正在安装/更新依赖包...', 'info');
-                    const installRes = await fetch(`${API_BASE}/update/install`, { method: 'POST' });
-                    const installResult = await installRes.json();
-                    
-                    if (installResult.success) {
-                        log(`依赖安装成功`, 'success');
-                    } else {
-                        log(`依赖安装失败：${installResult.error}`, 'error');
-                    }
+                    log('正在安装依赖...', 'info');
+                    const r = await fetch('/api/update/install', { method: 'POST' });
+                    const d = await r.json();
+                    log(d.success ? '依赖安装完成' : `失败：${d.error}`, d.success ? 'success' : 'error');
                 }
-
-                // Step 3: Update database
-                if (updateDatabase) {
+                if (updateDb) {
                     log('正在更新数据库结构...', 'info');
-                    const dbRes = await fetch(`${API_BASE}/update/database`, { method: 'POST' });
-                    const dbResult = await dbRes.json();
-                    
-                    if (dbResult.success) {
-                        log(`数据库更新成功：${dbResult.message}`, 'success');
-                    } else {
-                        log(`数据库更新失败：${dbResult.error}`, 'error');
-                    }
+                    const r = await fetch('/api/update/database', { method: 'POST' });
+                    const d = await r.json();
+                    log(d.success ? `数据库：${d.message}` : `失败：${d.error}`, d.success ? 'success' : 'error');
                 }
-
                 log('更新完成！', 'success');
                 document.getElementById('updateStatus').textContent = '✅ 更新完成';
                 document.getElementById('updateStatus').className = 'status-badge status-success';
                 document.getElementById('restartBtn').classList.remove('hidden');
-
-            } catch (error) {
-                log(`更新过程出错：${error.message}`, 'error');
-                document.getElementById('updateStatus').textContent = '❌ 更新失败';
-                document.getElementById('updateStatus').className = 'status-badge status-info';
+            } catch (e) {
+                log(`更新出错：${e.message}`, 'error');
             } finally {
-                isUpdating = false;
-                document.getElementById('startUpdateBtn').disabled = false;
+                document.getElementById('gitUpdateBtn').disabled = false;
             }
         }
 
         async function restartServer() {
-            if (!confirm('确定要重启服务吗？这将暂时中断服务。')) {
-                return;
-            }
-
+            if (!confirm('确定要重启服务吗？')) return;
+            log('正在重启服务...', 'warning');
             try {
-                log('正在重启服务...', 'warning');
-                const res = await fetch(`${API_BASE}/update/restart`, { method: 'POST' });
-                const result = await res.json();
-                
-                if (result.success) {
-                    log('服务重启成功！页面将在 3 秒后刷新...', 'success');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
-                } else {
-                    log(`服务重启失败：${result.error}`, 'error');
-                }
-            } catch (error) {
-                log(`服务重启出错：${error.message}`, 'error');
+                await fetch('/api/update/restart', { method: 'POST' });
+                log('服务正在重启，3 秒后刷新页面...', 'success');
+                setTimeout(() => window.location.reload(), 3000);
+            } catch (e) {
+                log('服务已断开，正在重启中...请手动刷新页面', 'warning');
+                setTimeout(() => window.location.reload(), 5000);
             }
         }
     </script>
