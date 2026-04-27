@@ -762,7 +762,7 @@ app.get('/api/export', (req, res) => {
     rows.forEach(row => {
       if (row.app_type === 'app') {
         appData.push({
-          '序号': row.id,
+          '序号': appData.length + 1,
           '类型': 'APP',
           'APP名称': row.app_name || '',
           '所属团队': row.team_or_institution || '',
@@ -777,7 +777,7 @@ app.get('/api/export', (req, res) => {
         });
       } else if (row.app_type === 'miniprogram') {
         miniprogramData.push({
-          '序号': row.id,
+          '序号': miniprogramData.length + 1,
           '类型': '小程序',
           '小程序名称': row.miniprogram_name || '',
           '小程序所属机构': row.miniprogram_institution || '',
