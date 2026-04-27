@@ -1,45 +1,25 @@
 #!/bin/bash
+#
+# APP/小程序登记系统 - 快速启动脚本
+#
 
-# 一键启动脚本 - 完整流程：安装依赖 → 安装数据库驱动 → 初始化数据库 → 启动服务器
+set -e
 
-echo "🚀 小程序登记系统 - 一键启动"
-echo "================================"
-
-# 检查 Node.js 是否安装
-if ! command -v node &> /dev/null; then
-    echo "❌ 错误：未找到 Node.js，请先安装 Node.js"
-    exit 1
+# 检查依赖
+if [ ! -d "node_modules" ]; then
+    echo "📦 首次运行，安装依赖..."
+    npm install --production
 fi
 
-echo "✅ Node.js 版本：$(node -v)"
-
-# 安装依赖（包括 sqlite3 数据库驱动）
-echo ""
-echo "📦 正在安装依赖（包括 SQLite 数据库驱动）..."
-npm install
-
-if [ $? -ne 0 ]; then
-    echo "❌ 依赖安装失败，尝试重新安装 sqlite3..."
-    npm rebuild sqlite3
-    npm install
+# 检查数据库
+if [ ! -f "unified-apps.db" ]; then
+    echo "🗄️  初始化数据库..."
+    node init-db.js
 fi
 
-echo "✅ 依赖安装完成"
+# 创建 uploads 目录
+mkdir -p uploads
 
-# 初始化数据库
-echo ""
-echo "🗄️  正在初始化数据库..."
-node init-db.js
-
-if [ $? -ne 0 ]; then
-    echo "❌ 数据库初始化失败"
-    exit 1
-fi
-
-echo "✅ 数据库初始化完成"
-
-# 启动服务器
-echo ""
-echo "🌐 正在启动服务器..."
-echo "================================"
-npm start
+# 启动服务
+echo "🚀 启动 APP/小程序登记管理系统..."
+node server.js

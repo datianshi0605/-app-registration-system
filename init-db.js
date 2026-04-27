@@ -1,35 +1,51 @@
 #!/usr/bin/env node
 /**
  * 数据库初始化脚本
- * 用于创建和初始化 SQLite 数据库
+ * 创建和初始化 APP/小程序统一登记数据库
  */
 
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'miniprogram.db');
+const DB_PATH = path.join(__dirname, 'unified-apps.db');
 
 console.log('📦 开始初始化数据库...');
 console.log(`📍 数据库路径：${DB_PATH}`);
 
-// 创建数据库连接
 const db = new sqlite3.Database(DB_PATH, (err) => {
   if (err) {
     console.error('❌ 创建数据库失败:', err.message);
     process.exit(1);
   }
   console.log('✅ 数据库连接成功');
-  
-  // 创建 registrations 表
-  db.run(`CREATE TABLE IF NOT EXISTS registrations (
+
+  db.run(`CREATE TABLE IF NOT EXISTS applications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    app_name TEXT NOT NULL,
-    department TEXT NOT NULL,
-    dev_type TEXT NOT NULL CHECK(dev_type IN ('internal', 'external')),
-    privacy_policy TEXT NOT NULL CHECK(privacy_policy IN ('yes', 'no')),
-    owner TEXT NOT NULL,
-    security_owner TEXT NOT NULL,
-    security_vuln TEXT NOT NULL CHECK(security_vuln IN ('yes', 'no')),
+    app_type TEXT NOT NULL DEFAULT 'app' CHECK(app_type IN ('app', 'miniprogram')),
+    
+    -- APP 专属字段
+    app_name TEXT,
+    team_or_institution TEXT,
+    app_market TEXT,
+    app_license_number TEXT,
+    icp_license_number TEXT,
+    education_filing TEXT,
+    
+    -- 小程序专属字段
+    miniprogram_name TEXT,
+    miniprogram_institution TEXT,
+    miniprogram_platform TEXT,
+    miniprogram_function TEXT,
+    development_status TEXT,
+    deployment_location TEXT,
+    
+    -- 公共字段
+    backend_domain TEXT,
+    product_owner TEXT,
+    dev_owner TEXT,
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'launched' CHECK(status IN ('developing', 'launched', 'offline', 'paused')),
+    
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`, (err) => {
@@ -38,10 +54,9 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       db.close();
       process.exit(1);
     }
-    console.log('✅ 表 registrations 创建成功');
-    
-    // 验证表结构
-    db.get("SELECT COUNT(*) as count FROM registrations", (err, row) => {
+    console.log('✅ 表 applications 创建成功');
+
+    db.get("SELECT COUNT(*) as count FROM applications", (err, row) => {
       if (err) {
         console.error('❌ 验证表结构失败:', err.message);
       } else {

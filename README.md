@@ -1,43 +1,36 @@
-# APP/小程序登记系统
+# APP/小程序统一登记管理系统
 
-一个统一的 APP 和小程序登记管理平台，支持数据导入导出、统计分析等功能。
+企业级 APP 和小程序统一登记管理平台，支持数据导入导出、统计分析、分页查询等功能。
 
-## 系统要求
+## ✨ 功能特性
+
+- ✅ **APP 和小程序统一管理** — 一个平台管理所有移动端应用
+- ✅ **分类登记** — APP 和小程序各有专属字段（备案编号、发布平台等）
+- ✅ **批量导入/导出 Excel** — 支持 APP 和小程序分别导入，自动去重
+- ✅ **数据统计分析** — 类型分布、机构分布、状态分布图表
+- ✅ **搜索和筛选** — 按名称、机构、类型搜索
+- ✅ **分页显示** — 支持自定义每页条数，一键显示全部
+- ✅ **弹窗编辑** — 现代化弹窗式编辑界面
+- ✅ **下线/删除** — 支持软删除（标记下线）和永久删除
+- ✅ **响应式设计** — 适配桌面和移动端
+
+## 🚀 快速开始
+
+### 系统要求
 
 - Node.js >= 14.0.0
 - npm >= 6.0.0
-- Linux/macOS/Windows
 
-## 快速开始
-
-### 1. 克隆项目
+### 一键安装
 
 ```bash
 git clone https://github.com/datianshi0605/-app-registration-system.git
 cd -app-registration-system
+chmod +x install.sh
+./install.sh
 ```
 
-### 2. 一键部署（推荐）
-
-运行部署脚本，自动完成所有安装步骤：
-
-```bash
-./scripts/deploy.sh
-```
-
-或者使用快速启动脚本：
-
-```bash
-./start.sh
-```
-
-**部署脚本自动完成：**
-- ✅ 检查系统环境（Node.js、npm）
-- ✅ 安装依赖（包括 SQLite 数据库驱动）
-- ✅ 初始化数据库（创建数据库文件和表结构）
-- ✅ 验证安装
-
-### 3. 启动服务
+### 启动服务
 
 ```bash
 npm start
@@ -45,156 +38,124 @@ npm start
 
 访问 [http://localhost:9999](http://localhost:9999)
 
-## 手动安装
-
-如果不想使用一键部署脚本，可以手动执行：
-
-### 1. 安装依赖
+### 快速启动（自动检查依赖和数据库）
 
 ```bash
-npm install
+./start.sh
 ```
 
-### 2. 初始化数据库
+## 📋 APP 登记字段
 
-```bash
-node init-db.js
-```
+| 字段 | 说明 |
+|------|------|
+| APP 名称 | 应用名称（必填） |
+| 所属团队 | 开发团队或机构（必填） |
+| 主要市场 | App Store、华为、小米等 |
+| APP 备案编号 | 工信部 APP 备案号 |
+| ICP 备案编号 | ICP 备案号 |
+| 教育备案 | 教育类 APP 备案号 |
 
-这会创建 `miniprogram.db` 数据库文件并初始化表结构。
+## 📋 小程序登记字段
 
-### 3. 启动服务
+| 字段 | 说明 |
+|------|------|
+| 小程序名称 | 小程序名称（必填） |
+| 所属机构 | 开发机构（必填） |
+| 发布平台 | 微信、支付宝、百度等 |
+| 小程序功能 | 功能描述 |
+| 开发情况说明 | 开发进度 |
+| 部署位置 | 部署 URL |
 
-```bash
-npm start
-```
+## 📋 公共字段
 
-## 开发模式
+| 字段 | 说明 |
+|------|------|
+| 后台域名 | API 后台域名 |
+| 产品负责人 | 产品 owner |
+| 开发负责人 | 研发 owner |
+| 应用状态 | 开发中/已上线/已下线/暂停维护 |
+| 备注 | 其他说明 |
 
-```bash
-# 安装开发依赖
-npm install
-
-# 启动开发服务器（自动重启）
-npm run dev
-```
-
-## 功能特性
-
-- ✅ APP 和小程序统一管理
-- ✅ 批量导入/导出 Excel
-- ✅ 数据统计分析
-- ✅ 搜索和筛选
-- ✅ 分页显示
-- ✅ 响应式设计
-
-## 配置
+## 🔧 配置
 
 ### 修改端口
 
-默认端口：9999
-
 ```bash
-# 方法 1: 环境变量
-export PORT=3000
-npm start
-
-# 方法 2: 修改 server.js
+# 环境变量方式
+PORT=3000 npm start
 ```
 
-## 数据库
+默认端口：**9999**
 
-- **类型**: SQLite3
-- **文件**: `./miniprogram.db`（自动创建）
-- **表**: `registrations`（自动初始化）
-
-无需手动配置数据库，首次运行时会自动创建。
-
-## 项目结构
+## 📁 项目结构
 
 ```
--app-registration-system/
-├── scripts/
-│   └── deploy.sh          # 一键部署脚本
-├── public/                 # 前端文件
-├── server.js              # 服务器主文件
+app-registration-system/
+├── server.js              # 服务器主文件（APP + 小程序统一版）
 ├── init-db.js             # 数据库初始化脚本
+├── install.sh             # 一键安装脚本
 ├── start.sh               # 快速启动脚本
+├── scripts/
+│   └── deploy.sh          # 部署脚本
+├── public/
+│   └── index.html         # 前端页面
 ├── package.json           # 项目配置
 └── README.md              # 本文档
 ```
 
-## API 接口
+## 📊 API 接口
 
-### 获取所有登记
-```
-GET /api/registrations
-```
+### 应用管理
 
-### 创建登记
-```
-POST /api/registrations
-Content-Type: application/json
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/applications` | 获取活跃应用列表（分页） |
+| GET | `/api/applications/offline` | 获取已下线应用列表 |
+| GET | `/api/applications/:id` | 获取单个应用详情 |
+| POST | `/api/applications` | 创建新应用 |
+| PUT | `/api/applications/:id` | 更新应用信息 |
+| DELETE | `/api/applications/:id` | 标记下线 |
+| DELETE | `/api/applications/:id/permanent` | 永久删除 |
 
-{
-  "appName": "小程序名称",
-  "department": "部门",
-  "devType": "internal|external",
-  "privacyPolicy": "yes|no",
-  "owner": "负责人",
-  "securityOwner": "安全负责人",
-  "securityVuln": "yes|no"
-}
-```
+### 导入导出
 
-### 导出 Excel
-```
-GET /api/export
-```
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/export` | 导出全部数据（Excel） |
+| GET | `/api/template/app` | 下载 APP 导入模板 |
+| GET | `/api/template/miniprogram` | 下载小程序导入模板 |
+| POST | `/api/import` | 批量导入（Excel） |
 
-## 常见问题
+### 统计分析
 
-### 端口被占用
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/statistics` | 总量统计 |
+| GET | `/api/analytics/type` | 类型分布 |
+| GET | `/api/analytics/team` | 机构分布 |
+| GET | `/api/analytics/status` | 状态分布 |
+
+## 🗄️ 数据库
+
+- **类型**: SQLite3
+- **文件**: `unified-apps.db`（自动创建）
+- **表**: `applications`
+
+### 常见问题
 
 ```bash
-# 查看占用端口的进程
+# 端口被占用
 lsof -i :9999
-
-# 杀死进程
 kill -9 <PID>
-
-# 或修改端口
-export PORT=3000
-npm start
-```
-
-### 数据库问题
-
-```bash
-# 删除数据库锁文件
-rm -f miniprogram.db-journal
-rm -f miniprogram.db-wal
-rm -f miniprogram.db-shm
 
 # 重新初始化数据库
 node init-db.js
-```
 
-### 依赖安装失败
-
-```bash
-# 删除 node_modules 重新安装
+# 依赖问题
 rm -rf node_modules package-lock.json
 npm install
-
-# 重建 sqlite3
-npm rebuild sqlite3
 ```
 
-## 许可证
+## 📄 许可证
 
 MIT License
-
-## 反馈
-
-如有问题，请提交 Issue 或联系开发者。
