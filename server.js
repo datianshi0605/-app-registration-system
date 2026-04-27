@@ -26,6 +26,36 @@ const db = new sqlite3.Database('./unified-apps.db', (err) => {
     console.error('Error opening database:', err.message);
   } else {
     console.log('Connected to SQLite database with separate APP/MiniProgram fields');
+    // 自动建表
+    db.run(`CREATE TABLE IF NOT EXISTS applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      app_type TEXT NOT NULL DEFAULT 'app' CHECK(app_type IN ('app', 'miniprogram')),
+      app_name TEXT,
+      team_or_institution TEXT,
+      app_market TEXT,
+      app_license_number TEXT,
+      icp_license_number TEXT,
+      education_filing TEXT,
+      miniprogram_name TEXT,
+      miniprogram_institution TEXT,
+      miniprogram_platform TEXT,
+      miniprogram_function TEXT,
+      development_status TEXT,
+      deployment_location TEXT,
+      backend_domain TEXT,
+      product_owner TEXT,
+      dev_owner TEXT,
+      notes TEXT,
+      status TEXT NOT NULL DEFAULT 'launched' CHECK(status IN ('developing', 'launched', 'offline', 'paused')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, (err) => {
+      if (err) {
+        console.error('Error creating table:', err.message);
+      } else {
+        console.log('Applications table ready');
+      }
+    });
   }
 });
 
