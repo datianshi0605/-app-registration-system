@@ -1813,6 +1813,17 @@
                                         },
                                         color: '#1F2937'
                                     }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.parsed || 0;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return `${label}: ${value} (${percentage}%)`;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1875,6 +1886,13 @@
                             plugins: {
                                 legend: {
                                     display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `应用数量：${context.parsed.y}`;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1936,6 +1954,13 @@
                             plugins: {
                                 legend: {
                                     display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `应用数量：${context.parsed.y}`;
+                                        }
+                                    }
                                 }
                             }
                         }
