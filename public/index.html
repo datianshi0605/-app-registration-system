@@ -440,11 +440,22 @@
             padding: 1rem 1.25rem;
             font-size: 0.95rem;
             color: #374151;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .table-row:nth-child(odd) {
+            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+        }
+        
+        .table-row:nth-child(even) {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
         }
         
         .table-row:hover {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            transform: scale(1.002);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
         }
         
         /* Initially hide type-specific fields */
