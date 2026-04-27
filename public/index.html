@@ -6,6 +6,7 @@
     <title>应用登记管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .fade-in {
@@ -1824,6 +1825,18 @@
                                             return `${label}: ${value} (${percentage}%)`;
                                         }
                                     }
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    },
+                                    formatter: (value, context) => {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+                                        return `${value}\n(${percentage}%)`;
+                                    }
                                 }
                             }
                         }
@@ -1893,6 +1906,16 @@
                                             return `应用数量：${context.parsed.y}`;
                                         }
                                     }
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    color: '#1F2937',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    },
+                                    formatter: (value) => value
                                 }
                             }
                         }
@@ -1961,6 +1984,16 @@
                                             return `应用数量：${context.parsed.y}`;
                                         }
                                     }
+                                },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    color: '#1F2937',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    },
+                                    formatter: (value) => value
                                 }
                             }
                         }
