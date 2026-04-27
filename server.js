@@ -919,6 +919,74 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Update management endpoints
+const { exec } = require('child_process');
+
+app.post('/api/update/pull', (req, res) => {
+  exec('git pull', { cwd: __dirname }, (error, stdout, stderr) => {
+    if (error) {
+      res.json({ success: false, error: stderr || error.message });
+      return;
+    }
+    if (stdout.includes('Already up to date.')) {
+      res.json({ success: true, message: '已是最新版本', alreadyLatest: true });
+    } else {
+      res.json({ success: true, message: '代码已更新到最新版本' });
+    }
+  });
+});
+
+app.post('/api/update/install', (req, res) => {
+  exec('npm install --production', { cwd: __dirname }, (error, stdout, stderr) => {
+    if (error) {
+      res.json({ success: false, error: stderr || error.message });
+      return;
+    }
+    res.json({ success: true, message: '依赖安装完成' });
+  });
+});
+
+app.post('/api/update/database', (req, res) => {
+  // Run database migration (create table if not exists)
+  db.run(`CREATE TABLE IF NOT EXISTS applications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_type TEXT NOT NULL DEFAULT 'app' CHECK(app_type IN ('app', 'miniprogram')),
+    app_name TEXT,
+    team_or_institution TEXT,
+    app_market TEXT,
+    app_license_number TEXT,
+    icp_license_number TEXT,
+    education_filing TEXT,
+    miniprogram_name TEXT,
+    miniprogram_institution TEXT,
+    miniprogram_platform TEXT,
+    miniprogram_function TEXT,
+    development_status TEXT,
+    deployment_location TEXT,
+    backend_domain TEXT,
+    product_owner TEXT,
+    dev_owner TEXT,
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'launched' CHECK(status IN ('developing', 'launched', 'offline', 'paused')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) {
+      res.json({ success: false, error: err.message });
+    } else {
+      res.json({ success: true, message: '数据库结构已同步' });
+    }
+  });
+});
+
+app.post('/api/update/restart', (req, res) => {
+  res.json({ success: true, message: '服务即将重启' });
+  // Graceful restart
+  setTimeout(() => {
+    process.exit(0);
+  }, 1000);
+});
+
 app.listen(PORT, () => {
   console.log(`Modern APP/MiniProgram system with popup editing running on http://localhost:${PORT}`);
 });

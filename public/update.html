@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统更新管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+            border: 1px solid #e5e7eb;
+        }
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #f3f4f6;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #10b981;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        .log-output {
+            background: #1f2937;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            padding: 1.5rem;
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .status-success {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+        .status-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%);
+            color: #92400e;
+        }
+        .status-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto py-8 px-4">
+        <!-- Header -->
+        <div class="text-center mb-10 fade-in">
+            <h1 class="text-3xl font-bold text-gray-900 mb-3">
+                <i class="fas fa-sync-alt text-blue-600 mr-3"></i>系统更新管理
+            </h1>
+            <p class="text-lg text-gray-600">一键更新系统代码和数据库，安全可控</p>
+        </div>
+
+        <!-- Current Version Info -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h2 class="text-xl font-bold text-gray-900">📊 当前版本信息</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
+                        <p class="text-gray-600 text-sm mb-2">应用版本</p>
+                        <p class="text-2xl font-bold text-blue-600" id="appVersion">-</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+                        <p class="text-gray-600 text-sm mb-2">数据库状态</p>
+                        <p class="text-lg font-bold text-green-600" id="dbStatus">-</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
+                        <p class="text-gray-600 text-sm mb-2">数据库记录</p>
+                        <p class="text-2xl font-bold text-purple-600" id="dbCount">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Options -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h2 class="text-xl font-bold text-gray-900">⚙️ 更新选项</h2>
+            </div>
+            <div class="card-body">
+                <div class="space-y-6">
+                    <!-- Code Update -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-code text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">更新系统代码</h3>
+                                <p class="text-gray-600 text-sm">从 GitHub 拉取最新代码</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="updateCode" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Database Update -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-database text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">更新数据库结构</h3>
+                                <p class="text-gray-600 text-sm">同步最新表结构（不影响现有数据）</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="updateDatabase">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Install Dependencies -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-box text-purple-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">安装依赖</h3>
+                                <p class="text-gray-600 text-sm">更新 npm 依赖包</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="installDeps" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+                    <button id="startUpdateBtn" class="btn btn-primary flex-1 justify-center text-lg">
+                        <i class="fas fa-play mr-2"></i> 开始更新
+                    </button>
+                    <button id="restartBtn" class="btn btn-warning flex-1 justify-center text-lg hidden">
+                        <i class="fas fa-redo mr-2"></i> 重启服务
+                    </button>
+                </div>
+
+                <!-- Warning Notice -->
+                <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-xl">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mt-0.5"></i>
+                        <div>
+                            <h4 class="font-bold text-yellow-800 mb-1">注意事项</h4>
+                            <ul class="text-yellow-700 text-sm space-y-1">
+                                <li>• 更新代码不会影响现有数据</li>
+                                <li>• 数据库结构更新会保留所有数据</li>
+                                <li>• 建议更新后重启服务以应用更改</li>
+                                <li>• 更新过程中请勿关闭页面</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Log -->
+        <div id="logCard" class="card fade-in hidden">
+            <div class="card-header">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-900">📝 更新日志</h2>
+                    <span id="updateStatus" class="status-badge status-info">准备中...</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="logOutput" class="log-output">等待开始更新...</div>
+                <div class="mt-4 flex gap-4">
+                    <button id="copyLogBtn" class="btn btn-secondary">
+                        <i class="fas fa-copy mr-2"></i> 复制日志
+                    </button>
+                    <button id="clearLogBtn" class="btn btn-secondary">
+                        <i class="fas fa-trash mr-2"></i> 清空日志
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let isUpdating = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSystemInfo();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('startUpdateBtn').addEventListener('click', startUpdate);
+            document.getElementById('restartBtn').addEventListener('click', restartServer);
+            document.getElementById('copyLogBtn').addEventListener('click', copyLog);
+            document.getElementById('clearLogBtn').addEventListener('click', clearLog);
+        }
+
+        async function loadSystemInfo() {
+            try {
+                // Get package version
+                const pkgRes = await fetch('/package.json');
+                const pkg = await pkgRes.json();
+                document.getElementById('appVersion').textContent = `v${pkg.version}`;
+
+                // Get database stats
+                const statsRes = await fetch(`${API_BASE}/statistics`);
+                const stats = await statsRes.json();
+                const total = stats.appCount + stats.miniprogramCount;
+                document.getElementById('dbCount').textContent = total;
+                document.getElementById('dbStatus').textContent = '✅ 正常';
+            } catch (error) {
+                console.error('Failed to load system info:', error);
+                document.getElementById('appVersion').textContent = '未知';
+                document.getElementById('dbStatus').textContent = '⚠️ 未知';
+            }
+        }
+
+        function log(message, type = 'info') {
+            const logOutput = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString('zh-CN');
+            const colors = {
+                info: '#10b981',
+                warning: '#f59e0b',
+                error: '#ef4444',
+                success: '#3b82f6'
+            };
+            const icon = {
+                info: 'ℹ️',
+                warning: '⚠️',
+                error: '❌',
+                success: '✅'
+            };
+            logOutput.innerHTML += `<div style="color: ${colors[type]}">[${timestamp}] ${icon[type]} ${message}</div>`;
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logOutput').innerHTML = '等待开始更新...';
+        }
+
+        function copyLog() {
+            const logText = document.getElementById('logOutput').innerText;
+            navigator.clipboard.writeText(logText).then(() => {
+                alert('日志已复制到剪贴板');
+            });
+        }
+
+        async function startUpdate() {
+            if (isUpdating) {
+                alert('更新正在进行中，请稍候...');
+                return;
+            }
+
+            const updateCode = document.getElementById('updateCode').checked;
+            const updateDatabase = document.getElementById('updateDatabase').checked;
+            const installDeps = document.getElementById('installDeps').checked;
+
+            if (!updateCode && !updateDatabase && !installDeps) {
+                alert('请至少选择一个更新选项');
+                return;
+            }
+
+            isUpdating = true;
+            document.getElementById('logCard').classList.remove('hidden');
+            document.getElementById('updateStatus').textContent = '更新中...';
+            document.getElementById('updateStatus').className = 'status-badge status-warning';
+            document.getElementById('startUpdateBtn').disabled = true;
+
+            clearLog();
+            log('开始系统更新...', 'info');
+
+            try {
+                // Step 1: Git pull
+                if (updateCode) {
+                    log('正在从 GitHub 拉取最新代码...', 'info');
+                    const pullRes = await fetch(`${API_BASE}/update/pull`, { method: 'POST' });
+                    const pullResult = await pullRes.json();
+                    
+                    if (pullResult.success) {
+                        log(`代码更新成功：${pullResult.message}`, 'success');
+                    } else {
+                        log(`代码更新失败：${pullResult.error}`, 'error');
+                    }
+                }
+
+                // Step 2: Install dependencies
+                if (installDeps) {
+                    log('正在安装/更新依赖包...', 'info');
+                    const installRes = await fetch(`${API_BASE}/update/install`, { method: 'POST' });
+                    const installResult = await installRes.json();
+                    
+                    if (installResult.success) {
+                        log(`依赖安装成功`, 'success');
+                    } else {
+                        log(`依赖安装失败：${installResult.error}`, 'error');
+                    }
+                }
+
+                // Step 3: Update database
+                if (updateDatabase) {
+                    log('正在更新数据库结构...', 'info');
+                    const dbRes = await fetch(`${API_BASE}/update/database`, { method: 'POST' });
+                    const dbResult = await dbRes.json();
+                    
+                    if (dbResult.success) {
+                        log(`数据库更新成功：${dbResult.message}`, 'success');
+                    } else {
+                        log(`数据库更新失败：${dbResult.error}`, 'error');
+                    }
+                }
+
+                log('更新完成！', 'success');
+                document.getElementById('updateStatus').textContent = '✅ 更新完成';
+                document.getElementById('updateStatus').className = 'status-badge status-success';
+                document.getElementById('restartBtn').classList.remove('hidden');
+
+            } catch (error) {
+                log(`更新过程出错：${error.message}`, 'error');
+                document.getElementById('updateStatus').textContent = '❌ 更新失败';
+                document.getElementById('updateStatus').className = 'status-badge status-info';
+            } finally {
+                isUpdating = false;
+                document.getElementById('startUpdateBtn').disabled = false;
+            }
+        }
+
+        async function restartServer() {
+            if (!confirm('确定要重启服务吗？这将暂时中断服务。')) {
+                return;
+            }
+
+            try {
+                log('正在重启服务...', 'warning');
+                const res = await fetch(`${API_BASE}/update/restart`, { method: 'POST' });
+                const result = await res.json();
+                
+                if (result.success) {
+                    log('服务重启成功！页面将在 3 秒后刷新...', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    log(`服务重启失败：${result.error}`, 'error');
+                }
+            } catch (error) {
+                log(`服务重启出错：${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
