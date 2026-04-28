@@ -541,7 +541,7 @@
     <div class="main-container py-8">
         <!-- Header -->
         <div class="text-center mb-10">
-            <div class="flex items-center justify-between max-w-5xl mx-auto"><div><h1 class="text-3xl font-bold text-gray-900 mb-3">应用查看登记管理系统</h1><p class="text-lg text-gray-600">现代化的企业级应用管理平台，支持 APP 和小程序的统一登记、导入、查询和分析</p></div><a href="/update.html" class="btn btn-secondary" style="margin-left:2rem"><i class="fas fa-sync-alt mr-2"></i>系统更新</a> </div>
+            <div class="flex items-center justify-between max-w-5xl mx-auto"><div><h1 class="text-3xl font-bold text-gray-900 mb-3">应用查看登记管理系统</h1><p class="text-lg text-gray-600">现代化的企业级应用管理平台，支持 APP 和小程序的统一登记、导入、查询和分析</p></div><a href="/update.html" class="btn btn-secondary" style="margin-left:2rem"><i class="fas fa-sync-alt mr-2"></i>系统更新</a></div>
         </div>
 
         <!-- View Toggle Tabs -->
@@ -1382,27 +1382,20 @@
             paginationContainer.classList.remove('hidden');
             
             dataBody.innerHTML = data.map((app, index) => {
-                // 计算显示序号（从 1 开始）
                 const displayIndex = index + 1;
                 
-                let name = '';
-                let institution = '';
-                let market = '';
-                let icp = '';
-                let education = '';
+                let name, institution, market, feature;
                 
                 if (app.app_type === 'app') {
                     name = app.app_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.team_or_institution || '<span class="text-gray-400">-</span>';
                     market = app.app_market || '<span class="text-gray-400">-</span>';
-                    icp = app.app_license_number || '<span class="text-gray-400">-</span>';
-                    education = app.education_filing || '<span class="text-gray-400">-</span>';
+                    feature = app.app_license_number || '<span class="text-gray-400">-</span>';
                 } else {
                     name = app.miniprogram_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.miniprogram_institution || '<span class="text-gray-400">-</span>';
                     market = app.miniprogram_platform || '<span class="text-gray-400">-</span>';
-                    icp = app.miniprogram_function || '<span class="text-gray-400">-</span>';
-                    education = app.development_status || '<span class="text-gray-400">-</span>';
+                    feature = app.miniprogram_function || '<span class="text-gray-400">-</span>';
                 }
                 
                 return `
@@ -1421,7 +1414,7 @@
                             ${market}
                         </td>
                         <td class="table-cell text-gray-700">
-                            ${icp}
+                            ${feature}
                         </td>
                     </tr>
                 `;
