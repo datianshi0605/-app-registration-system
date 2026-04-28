@@ -1156,10 +1156,33 @@ app.post('/api/update/database', (req, res) => {
 });
 
 app.post('/api/update/restart', (req, res) => {
-  res.json({ success: true, message: '服务即将重启' });
-  // Graceful restart
+  const usePM2 = process.env.npm_config_user_agent?.includes('pm2') || 
+                 process.env.PM2_HOME !== undefined ||
+                 fs.existsSync('ecosystem.config.js') ||
+                 fs.existsSync('process.json');
+  
+  res.json({ 
+    success: true, 
+    message: usePM2 ? '正在通过 PM2 重启服务' : '服务即将重启（需配置进程守护）',
+    usingPM2: usePM2
+  });
+  
   setTimeout(() => {
-    process.exit(0);
+    if (usePM2) {
+      // PM2 will auto-restart
+      process.exit(0);
+    } else {
+      // Try to restart via pm2 CLI if available
+      const { exec } = require('child_process');
+      exec('pm2 restart all', (err) => {
+        if (!err) {
+          process.exit(0);
+        } else {
+          // Fallback: just exit, hope systemd or similar will restart
+          process.exit(0);
+        }
+      });
+    }
   }, 1000);
 });
 

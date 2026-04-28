@@ -423,10 +423,12 @@
 
                 if (result.success) {
                     result.logs.forEach(l => log(l.message, l.type));
-                    log('更新完成！', 'success');
-                    document.getElementById('updateStatus').textContent = '✅ 更新完成';
+                    log('正在重启服务...', 'warning');
+                    await fetch('/api/update/restart', { method: 'POST' });
+                    log('服务正在重启，5 秒后自动刷新页面...', 'success');
+                    document.getElementById('updateStatus').textContent = '✅ 更新完成，服务重启中';
                     document.getElementById('updateStatus').className = 'status-badge status-success';
-                    document.getElementById('restartBtn').classList.remove('hidden');
+                    setTimeout(() => window.location.reload(), 5000);
                 } else {
                     log(`更新失败：${result.error}`, 'error');
                     document.getElementById('updateStatus').textContent = '❌ 更新失败';
@@ -451,6 +453,7 @@
             document.getElementById('gitUpdateBtn').disabled = true;
 
             try {
+                // Step 1: Git pull
                 if (updateCode) {
                     log('正在从 GitHub 拉取最新代码...', 'info');
                     const r = await fetch('/api/update/pull', { method: 'POST' });
@@ -461,27 +464,42 @@
                     } else {
                         log(`失败：${d.error}`, 'error');
                         if (d.hint) log(`提示：${d.hint}`, 'warning');
+                        document.getElementById('updateStatus').textContent = '❌ 更新失败';
+                        document.getElementById('gitUpdateBtn').disabled = false;
+                        return;
                     }
                 }
-                if (installDeps) {
+
+                // Step 2: Install dependencies (always run after code update)
+                if (installDeps || updateCode) {
                     log('正在安装依赖...', 'info');
                     const r = await fetch('/api/update/install', { method: 'POST' });
                     const d = await r.json();
                     log(d.success ? '依赖安装完成' : `失败：${d.error}`, d.success ? 'success' : 'error');
                 }
+
+                // Step 3: Update database structure
                 if (updateDb) {
                     log('正在更新数据库结构...', 'info');
                     const r = await fetch('/api/update/database', { method: 'POST' });
                     const d = await r.json();
                     log(d.success ? `数据库：${d.message}` : `失败：${d.error}`, d.success ? 'success' : 'error');
                 }
-                log('更新完成！', 'success');
-                document.getElementById('updateStatus').textContent = '✅ 更新完成';
+
+                // Step 4: Auto restart
+                log('正在重启服务...', 'warning');
+                await fetch('/api/update/restart', { method: 'POST' });
+                log('服务正在重启，5 秒后自动刷新页面...', 'success');
+                document.getElementById('updateStatus').textContent = '✅ 更新完成，服务重启中';
                 document.getElementById('updateStatus').className = 'status-badge status-success';
-                document.getElementById('restartBtn').classList.remove('hidden');
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 5000);
+
             } catch (e) {
                 log(`更新出错：${e.message}`, 'error');
-            } finally {
+                document.getElementById('updateStatus').textContent = '❌ 更新失败';
                 document.getElementById('gitUpdateBtn').disabled = false;
             }
         }
