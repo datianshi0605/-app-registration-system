@@ -102,6 +102,31 @@ function checkDuplicate(appType, appName, miniprogramName, callback) {
 
 // API Routes
 
+// Get distinct institution/team names for autocomplete dropdown
+app.get('/api/institutions', (req, res) => {
+  const { q = '', type = '' } = req.query;
+  let query = `
+    SELECT DISTINCT institution FROM (
+      SELECT team_or_institution AS institution FROM applications 
+        WHERE team_or_institution IS NOT NULL AND team_or_institution != ''
+      UNION
+      SELECT miniprogram_institution AS institution FROM applications 
+        WHERE miniprogram_institution IS NOT NULL AND miniprogram_institution != ''
+    )
+    WHERE institution LIKE ?
+    ORDER BY institution
+    LIMIT 20
+  `;
+  const params = [`%${q}%`];
+
+  db.all(query, params, (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows.map(r => r.institution));
+  });
+});
+
 // Get all active applications (non-offline) with pagination
 app.get('/api/applications', (req, res) => {
   const { name, institution, appType: filterAppType, page = 1, limit = 20, showAll = false } = req.query;

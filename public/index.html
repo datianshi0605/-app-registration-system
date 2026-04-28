@@ -97,6 +97,48 @@
         .action-delete:hover { 
             background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
         }
+        
+        /* Autocomplete dropdown styles */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+        }
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #374151;
+            transition: background 0.15s;
+        }
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+        .autocomplete-no-result {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            text-align: center;
+        }
+        
         .action-permanent-delete { 
             background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
             color: #991b1b;
@@ -530,8 +572,11 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">所属机构/团队</label>
-                        <input type="text" id="searchInstitution" placeholder="请输入机构或团队名称"
-                               class="form-input">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="searchInstitution" placeholder="请输入机构或团队名称"
+                                   class="form-input" autocomplete="off">
+                            <div id="searchInstitution-dropdown" class="autocomplete-dropdown"></div>
+                        </div>
                     </div>
                     <div class="form-row">
                         <label class="form-label">应用类型</label>
@@ -647,7 +692,10 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label required">所属团队</label>
-                            <input type="text" id="teamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司">
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="teamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司" autocomplete="off">
+                                <div id="teamOrInstitution-dropdown" class="autocomplete-dropdown"></div>
+                            </div>
                         </div>
                         <div class="form-row">
                             <label class="form-label">主要市场</label>
@@ -675,7 +723,10 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label required">小程序所属机构</label>
-                            <input type="text" id="miniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门">
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="miniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门" autocomplete="off">
+                                <div id="miniprogramInstitution-dropdown" class="autocomplete-dropdown"></div>
+                            </div>
                         </div>
                         <div class="form-row">
                             <label class="form-label">小程序发布平台</label>
@@ -856,7 +907,10 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label required">所属团队</label>
-                        <input type="text" id="editTeamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="editTeamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司" autocomplete="off">
+                            <div id="editTeamOrInstitution-dropdown" class="autocomplete-dropdown"></div>
+                        </div>
                     </div>
                     <div class="form-row">
                         <label class="form-label">主要市场</label>
@@ -884,7 +938,10 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label required">小程序所属机构</label>
-                        <input type="text" id="editMiniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="editMiniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门" autocomplete="off">
+                            <div id="editMiniprogramInstitution-dropdown" class="autocomplete-dropdown"></div>
+                        </div>
                     </div>
                     <div class="form-row">
                         <label class="form-label">小程序发布平台</label>
@@ -2066,6 +2123,119 @@
                 alert('应用信息更新成功！');
             }
         });
+
+        // ========== Autocomplete for institution/team fields ==========
+        function setupAutocomplete(inputId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(inputId + '-dropdown');
+            if (!input || !dropdown) return;
+
+            let debounceTimer = null;
+            let activeIndex = -1;
+            let items = [];
+
+            function renderDropdown(list) {
+                items = list;
+                activeIndex = -1;
+                if (list.length === 0) {
+                    const val = input.value.trim();
+                    if (val.length > 0) {
+                        dropdown.innerHTML = '<div class="autocomplete-no-result">无匹配单位，可直接输入新单位</div>';
+                        dropdown.classList.add('show');
+                    } else {
+                        dropdown.classList.remove('show');
+                    }
+                    return;
+                }
+                dropdown.innerHTML = list.map((name, i) =>
+                    `<div class="autocomplete-item" data-index="${i}">${escapeHtml(name)}</div>`
+                ).join('');
+                dropdown.classList.add('show');
+
+                // Click to select
+                dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+                    el.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        input.value = list[parseInt(el.dataset.index)];
+                        dropdown.classList.remove('show');
+                    });
+                });
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            async function fetchSuggestions(query) {
+                try {
+                    const res = await fetch(`/api/institutions?q=${encodeURIComponent(query)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        renderDropdown(data);
+                    }
+                } catch (e) {
+                    console.error('Autocomplete fetch error:', e);
+                }
+            }
+
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const val = input.value.trim();
+                if (val.length === 0) {
+                    // Show all when empty (user clicks into field)
+                    debounceTimer = setTimeout(() => fetchSuggestions(''), 150);
+                    return;
+                }
+                debounceTimer = setTimeout(() => fetchSuggestions(val), 200);
+            });
+
+            input.addEventListener('focus', () => {
+                // Show full list on focus
+                fetchSuggestions(input.value.trim());
+            });
+
+            input.addEventListener('blur', () => {
+                // Delay to allow click on dropdown item
+                setTimeout(() => dropdown.classList.remove('show'), 200);
+            });
+
+            // Keyboard navigation
+            input.addEventListener('keydown', (e) => {
+                if (!dropdown.classList.contains('show') || items.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIndex = Math.min(activeIndex + 1, items.length - 1);
+                    updateActive();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIndex = Math.max(activeIndex - 1, 0);
+                    updateActive();
+                } else if (e.key === 'Enter' && activeIndex >= 0) {
+                    e.preventDefault();
+                    input.value = items[activeIndex];
+                    dropdown.classList.remove('show');
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            function updateActive() {
+                dropdown.querySelectorAll('.autocomplete-item').forEach((el, i) => {
+                    el.classList.toggle('active', i === activeIndex);
+                });
+                // Scroll active into view
+                const activeEl = dropdown.querySelector('.autocomplete-item.active');
+                if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        // Initialize autocomplete on all institution/team inputs
+        ['teamOrInstitution', 'miniprogramInstitution', 
+         'editTeamOrInstitution', 'editMiniprogramInstitution',
+         'searchInstitution'].forEach(setupAutocomplete);
 
         // Load initial data
         fetchApplications();
