@@ -1099,7 +1099,7 @@ app.post('/api/update/pull', (req, res) => {
     }
 
     // Try to pull
-    exec('git pull origin main', { cwd: __dirname }, (error, stdout, stderr) => {
+    exec('git pull origin master', { cwd: __dirname }, (error, stdout, stderr) => {
       if (error) {
         let errorMsg = stderr || error.message;
         let hint = '';
