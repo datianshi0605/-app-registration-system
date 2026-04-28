@@ -1198,29 +1198,36 @@ app.post('/api/update/restart', (req, res) => {
 
 // Auto-kill old process on the same port before starting
 function killPortAndStart() {
-  const { exec } = require('child_process');
-  exec(`lsof -ti:${PORT}`, (err, stdout) => {
-    if (stdout && stdout.trim()) {
-      const pids = stdout.trim().split('\n').filter(p => p !== String(process.pid));
-      if (pids.length > 0) {
-        console.log(`\u2139\uFE0F  端口 ${PORT} 被占用，正在释放 (PID: ${pids.join(', ')})...`);
-        pids.forEach(pid => {
-          try { process.kill(parseInt(pid), 'SIGTERM'); } catch(e) {}
-        });
-        // Wait a moment then start
-        setTimeout(startServer, 1500);
-      } else {
-        startServer();
-      }
+  const { execSync } = require('child_process');
+  try {
+    const pids = execSync(`lsof -ti:${PORT} 2>/dev/null`).toString().trim().split('\n').filter(p => p && p !== String(process.pid));
+    if (pids.length > 0) {
+      console.log(`\u2139\uFE0F  端口 ${PORT} 被占用，正在强制释放 (PID: ${pids.join(', ')})...`);
+      try { execSync(`kill -9 ${pids.join(' ')} 2>/dev/null`); } catch(e) {}
+      // Wait for port to be released
+      let retries = 10;
+      const waitForPort = () => {
+        try {
+          execSync(`lsof -ti:${PORT} 2>/dev/null`);
+          if (--retries > 0) setTimeout(waitForPort, 500);
+          else startServer();
+        } catch(e) {
+          console.log('\u2705 端口已释放');
+          startServer();
+        }
+      };
+      setTimeout(waitForPort, 500);
     } else {
       startServer();
     }
-  });
+  } catch(e) {
+    startServer();
+  }
 }
 
 function startServer() {
   app.listen(PORT, () => {
-    console.log(`Modern APP/MiniProgram system with popup editing running on http://localhost:${PORT}`);
+    console.log(`\u2705 系统已启动: http://localhost:${PORT}`);
   }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`\u274C 端口 ${PORT} 仍被占用，请手动执行: kill -9 $(lsof -ti:${PORT})`);
