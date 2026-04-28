@@ -1186,6 +1186,37 @@ app.post('/api/update/restart', (req, res) => {
   }, 1000);
 });
 
-app.listen(PORT, () => {
-  console.log(`Modern APP/MiniProgram system with popup editing running on http://localhost:${PORT}`);
-});
+// Auto-kill old process on the same port before starting
+function killPortAndStart() {
+  const { exec } = require('child_process');
+  exec(`lsof -ti:${PORT}`, (err, stdout) => {
+    if (stdout && stdout.trim()) {
+      const pids = stdout.trim().split('\n').filter(p => p !== String(process.pid));
+      if (pids.length > 0) {
+        console.log(`\u2139\uFE0F  端口 ${PORT} 被占用，正在释放 (PID: ${pids.join(', ')})...`);
+        pids.forEach(pid => {
+          try { process.kill(parseInt(pid), 'SIGTERM'); } catch(e) {}
+        });
+        // Wait a moment then start
+        setTimeout(startServer, 1500);
+      } else {
+        startServer();
+      }
+    } else {
+      startServer();
+    }
+  });
+}
+
+function startServer() {
+  app.listen(PORT, () => {
+    console.log(`Modern APP/MiniProgram system with popup editing running on http://localhost:${PORT}`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\u274C 端口 ${PORT} 仍被占用，请手动执行: kill -9 $(lsof -ti:${PORT})`);
+      process.exit(1);
+    }
+  });
+}
+
+killPortAndStart();

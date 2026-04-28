@@ -1792,18 +1792,18 @@
             try {
                 const res = await fetch('/api/institutions?q=');
                 if (res.ok) {
-                    const list = await res.json();
-                    const datalists = [
-                        { input: 'teamOrInstitution', list: 'teamOrInstitution-list' },
-                        { input: 'miniprogramInstitution', list: 'miniprogramInstitution-list' },
-                        { input: 'editTeamOrInstitution', list: 'editTeamOrInstitution-list' },
-                        { input: 'editMiniprogramInstitution', list: 'editMiniprogramInstitution-list' },
-                        { input: 'searchInstitution', list: 'searchInstitution-list' }
+                    const institutions = await res.json();
+                    const datalistIds = [
+                        'teamOrInstitution-list',
+                        'miniprogramInstitution-list',
+                        'editTeamOrInstitution-list',
+                        'editMiniprogramInstitution-list',
+                        'searchInstitution-list'
                     ];
-                    datalists.forEach(({ input, list }) => {
-                        const dl = document.getElementById(list);
-                        if (!dl) return;
-                        dl.innerHTML = list.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">').join('');
+                    const optionsHtml = institutions.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">').join('');
+                    datalistIds.forEach(id => {
+                        const dl = document.getElementById(id);
+                        if (dl) dl.innerHTML = optionsHtml;
                     });
                 }
             } catch (e) {
