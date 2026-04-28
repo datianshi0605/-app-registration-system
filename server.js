@@ -1200,29 +1200,28 @@ app.post('/api/update/restart', (req, res) => {
 function killPortAndStart() {
   const { execSync } = require('child_process');
   try {
-    const pids = execSync(`lsof -ti:${PORT} 2>/dev/null`).toString().trim().split('\n').filter(p => p && p !== String(process.pid));
-    if (pids.length > 0) {
-      console.log(`\u2139\uFE0F  端口 ${PORT} 被占用，正在强制释放 (PID: ${pids.join(', ')})...`);
-      try { execSync(`kill -9 ${pids.join(' ')} 2>/dev/null`); } catch(e) {}
+    const pids = execSync(`lsof -ti:${PORT} 2>/dev/null`).toString().trim();
+    if (pids && pids !== String(process.pid)) {
+      console.log(`\u2139\uFE0F  端口 ${PORT} 被占用，正在强制释放 (PID: ${pids})...`);
+      // Kill all processes on this port
+      execSync(`kill -9 ${pids} 2>/dev/null || true`);
       // Wait for port to be released
-      let retries = 10;
-      const waitForPort = () => {
+      const maxWait = 3000;
+      const startTime = Date.now();
+      while (Date.now() - startTime < maxWait) {
         try {
-          execSync(`lsof -ti:${PORT} 2>/dev/null`);
-          if (--retries > 0) setTimeout(waitForPort, 500);
-          else startServer();
+          const stillOccupied = execSync(`lsof -ti:${PORT} 2>/dev/null`).toString().trim();
+          if (!stillOccupied || stillOccupied === String(process.pid)) break;
         } catch(e) {
-          console.log('\u2705 端口已释放');
-          startServer();
+          break;
         }
-      };
-      setTimeout(waitForPort, 500);
-    } else {
-      startServer();
+      }
+      console.log('\u2705 端口已释放');
     }
   } catch(e) {
-    startServer();
+    // Ignore errors, try to start anyway
   }
+  startServer();
 }
 
 function startServer() {

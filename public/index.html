@@ -97,7 +97,8 @@
         .action-delete:hover { 
             background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
         }
-    </style>
+        
+        </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="main-container py-8">
@@ -134,9 +135,8 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">所属机构/团队</label>
-                        <select id="searchInstitution" class="form-select">
-                                <option value="">全部机构/团队</option>
-                            </select>
+                        <input type="text" id="searchInstitution" class="form-input" list="searchInstitution-list" placeholder="输入机构/团队名称" autocomplete="off">
+                                <datalist id="searchInstitution-list"></datalist>
                     </div>
                     <div class="form-row">
                         <label class="form-label">应用类型</label>
@@ -1103,24 +1103,14 @@
             
             if (app.app_type === 'app') {
                 editAppName.value = app.app_name || '';
-                const teamVal = app.team_or_institution || '';
-                editTeamOrInstitution.value = teamVal;
-                const teamCustom = document.getElementById('editTeamOrInstitutionCustom');
-                if (teamVal && ![...editTeamOrInstitution.options].some(o => o.value === teamVal)) {
-                    teamCustom.value = teamVal;
-                }
+                editTeamOrInstitution.value = app.team_or_institution || '';
                 editAppMarket.value = app.app_market || '';
                 editAppLicenseNumber.value = app.app_license_number || '';
                 editIcpLicenseNumber.value = app.icp_license_number || '';
                 editEducationFiling.value = app.education_filing || '';
             } else {
                 editMiniprogramName.value = app.miniprogram_name || '';
-                const instVal = app.miniprogram_institution || '';
-                editMiniprogramInstitution.value = instVal;
-                const instCustom = document.getElementById('editMiniprogramInstitutionCustom');
-                if (instVal && ![...editMiniprogramInstitution.options].some(o => o.value === instVal)) {
-                    instCustom.value = instVal;
-                }
+                editMiniprogramInstitution.value = app.miniprogram_institution || '';
                 editMiniprogramPlatform.value = app.miniprogram_platform || '';
                 editMiniprogramFunction.value = app.miniprogram_function || '';
                 editDevelopmentStatus.value = app.development_status || '';
@@ -1260,14 +1250,14 @@
             
             if (appTypeSelect.value === 'app') {
                 application.appName = appNameInput.value;
-                application.teamOrInstitution = document.getElementById('teamOrInstitutionCustom').value || teamOrInstitutionInput.value;
+                application.teamOrInstitution = teamOrInstitutionInput.value;
                 application.appMarket = appMarketInput.value;
                 application.appLicenseNumber = appLicenseNumberInput.value;
                 application.icpLicenseNumber = icpLicenseNumberInput.value;
                 application.educationFiling = educationFilingInput.value;
             } else {
                 application.miniprogramName = miniprogramNameInput.value;
-                application.miniprogramInstitution = document.getElementById('miniprogramInstitutionCustom').value || miniprogramInstitutionInput.value;
+                application.miniprogramInstitution = miniprogramInstitutionInput.value;
                 application.miniprogramPlatform = miniprogramPlatformInput.value;
                 application.miniprogramFunction = miniprogramFunctionInput.value;
                 application.developmentStatus = developmentStatusInput.value;
@@ -1667,14 +1657,14 @@
             
             if (editAppType.value === 'app') {
                 application.appName = editAppName.value;
-                application.teamOrInstitution = document.getElementById('editTeamOrInstitutionCustom').value || editTeamOrInstitution.value;
+                application.teamOrInstitution = editTeamOrInstitution.value;
                 application.appMarket = editAppMarket.value;
                 application.appLicenseNumber = editAppLicenseNumber.value;
                 application.icpLicenseNumber = editIcpLicenseNumber.value;
                 application.educationFiling = editEducationFiling.value;
             } else {
                 application.miniprogramName = editMiniprogramName.value;
-                application.miniprogramInstitution = document.getElementById('editMiniprogramInstitutionCustom').value || editMiniprogramInstitution.value;
+                application.miniprogramInstitution = editMiniprogramInstitution.value;
                 application.miniprogramPlatform = editMiniprogramPlatform.value;
                 application.miniprogramFunction = editMiniprogramFunction.value;
                 application.developmentStatus = editDevelopmentStatus.value;
@@ -1803,21 +1793,17 @@
                 const res = await fetch('/api/institutions?q=');
                 if (res.ok) {
                     const list = await res.json();
-                    const selects = [
-                        'teamOrInstitution',
-                        'miniprogramInstitution',
-                        'editTeamOrInstitution',
-                        'editMiniprogramInstitution',
-                        'searchInstitution'
+                    const datalists = [
+                        { input: 'teamOrInstitution', list: 'teamOrInstitution-list' },
+                        { input: 'miniprogramInstitution', list: 'miniprogramInstitution-list' },
+                        { input: 'editTeamOrInstitution', list: 'editTeamOrInstitution-list' },
+                        { input: 'editMiniprogramInstitution', list: 'editMiniprogramInstitution-list' },
+                        { input: 'searchInstitution', list: 'searchInstitution-list' }
                     ];
-                    selects.forEach(id => {
-                        const sel = document.getElementById(id);
-                        if (!sel) return;
-                        const isSearch = id === 'searchInstitution';
-                        const defaultText = isSearch ? '全部机构/团队' : 
-                                           id.includes('team') ? '请选择所属团队' : '请选择所属机构';
-                        sel.innerHTML = '<option value="">' + defaultText + '</option>' +
-                            list.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">' + item + '</option>').join('');
+                    datalists.forEach(({ input, list }) => {
+                        const dl = document.getElementById(list);
+                        if (!dl) return;
+                        dl.innerHTML = list.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">').join('');
                     });
                 }
             } catch (e) {
