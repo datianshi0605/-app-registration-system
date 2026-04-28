@@ -1063,6 +1063,9 @@
     </div>
 
     <script>
+        // Register Chart.js datalabels plugin for displaying values on charts
+        Chart.register(ChartDataLabels);
+
         // DOM elements
         const dataBody = document.getElementById('dataBody');
         const noDataMessage = document.getElementById('noDataMessage');
