@@ -185,6 +185,23 @@
             margin-bottom: 1.5rem;
             align-items: center;
         }
+
+        /* Make all form inputs full width */
+        .form-row input.form-input,
+        .form-row select.form-select,
+        .form-row textarea.form-textarea {
+            flex: 1;
+            min-width: 0;
+        }
+        .form-row {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        .form-row .form-input[required] {
+            width: 100%;
+        }
+
         
         .form-label {
             width: 140px;
@@ -535,6 +552,19 @@
                 margin-top: 1rem;
             }
         }
+    
+        /* Make all form inputs full width */
+        .form-row input.form-input,
+        .form-row select.form-select,
+        .form-row textarea.form-textarea {
+            flex: 1;
+            width: 100%;
+            min-width: 0;
+        }
+        .form-row {
+            align-items: flex-start !important;
+        }
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
