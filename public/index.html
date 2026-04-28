@@ -565,6 +565,28 @@
             align-items: flex-start !important;
         }
 
+    
+        /* Force all form inputs to full width */
+        #teamOrInstitution,
+        #miniprogramInstitution,
+        #editTeamOrInstitution,
+        #editMiniprogramInstitution,
+        #searchInstitution,
+        input.form-input[list] {
+            width: 100% !important;
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }
+        /* Remove any wrapper that might constrain width */
+        .form-row {
+            width: 100%;
+        }
+        .form-row input,
+        .form-row select,
+        .form-row textarea {
+            width: 100% !important;
+        }
+
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
