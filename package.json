@@ -1,6 +1,6 @@
 {
   "name": "app-registration-system",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "APP/小程序统一登记管理系统 - 支持APP和小程序的登记、导入导出、统计分析",
   "main": "server.js",
   "scripts": {

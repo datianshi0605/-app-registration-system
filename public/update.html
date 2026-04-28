@@ -344,7 +344,14 @@
                 const stats = await statsRes.json();
                 document.getElementById('dbCount').textContent = stats.appCount + stats.miniprogramCount;
                 document.getElementById('dbStatus').textContent = '✅ 正常';
-                document.getElementById('appVersion').textContent = 'v2.0.0';
+                // Auto-read version from API
+                try {
+                    const verRes = await fetch('/api/version');
+                    const verData = await verRes.json();
+                    document.getElementById('appVersion').textContent = 'v' + verData.version;
+                } catch(e) {
+                    document.getElementById('appVersion').textContent = '-';
+                }
             } catch (e) {
                 document.getElementById('dbStatus').textContent = '⚠️ 未知';
             }

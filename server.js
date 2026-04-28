@@ -841,6 +841,16 @@ app.get('/api/export', (req, res) => {
 });
 
 // Statistics endpoint
+// Version API - read from package.json
+app.get('/api/version', (req, res) => {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+    res.json({ version: pkg.version });
+  } catch (e) {
+    res.json({ version: 'unknown' });
+  }
+});
+
 app.get('/api/statistics', (req, res) => {
   // Get APP count
   db.get('SELECT COUNT(*) as count FROM applications WHERE app_type = ? AND status != ?', ['app', 'offline'], (err, appRow) => {
