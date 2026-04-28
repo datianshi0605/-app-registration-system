@@ -167,7 +167,7 @@
                         <p class="font-bold text-gray-900">📥 下载最新版本</p>
                         <p class="text-gray-500 text-sm">在能上网的电脑上打开此链接下载 ZIP</p>
                     </div>
-                    <a href="https://github.com/datianshi0605/-app-registration-system/archive/refs/heads/master.zip"
+                    <a href="https://github.com/datianshi0605/-app-registration-system/archive/refs/heads/main.zip"
                        target="_blank" class="btn btn-primary">
                         <i class="fas fa-download mr-2"></i>GitHub 下载
                     </a>
@@ -455,7 +455,13 @@
                     log('正在从 GitHub 拉取最新代码...', 'info');
                     const r = await fetch('/api/update/pull', { method: 'POST' });
                     const d = await r.json();
-                    log(d.success ? `代码更新：${d.message}` : `失败：${d.error}`, d.success ? 'success' : 'error');
+                    if (d.success) {
+                        log(`代码更新：${d.message}`, 'success');
+                        if (d.details) log(d.details, 'info');
+                    } else {
+                        log(`失败：${d.error}`, 'error');
+                        if (d.hint) log(`提示：${d.hint}`, 'warning');
+                    }
                 }
                 if (installDeps) {
                     log('正在安装依赖...', 'info');

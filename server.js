@@ -1077,16 +1077,38 @@ function runDbMigration(logs, callback) {
 }
 
 app.post('/api/update/pull', (req, res) => {
-  exec('git pull', { cwd: __dirname }, (error, stdout, stderr) => {
-    if (error) {
-      res.json({ success: false, error: stderr || error.message });
+  // First check if git is available and if this is a git repo
+  exec('git rev-parse --git-dir', { cwd: __dirname }, (gitError) => {
+    if (gitError) {
+      res.json({ 
+        success: false, 
+        error: '当前目录不是 Git 仓库，无法使用在线更新。请使用"上传更新包"方式，或在服务器上手动执行 git clone。',
+        hint: 'not_a_git_repo'
+      });
       return;
     }
-    if (stdout.includes('Already up to date.')) {
-      res.json({ success: true, message: '已是最新版本', alreadyLatest: true });
-    } else {
-      res.json({ success: true, message: '代码已更新到最新版本' });
-    }
+
+    // Try to pull
+    exec('git pull origin main', { cwd: __dirname }, (error, stdout, stderr) => {
+      if (error) {
+        let errorMsg = stderr || error.message;
+        let hint = '';
+        if (errorMsg.includes('Could not resolve hostname') || errorMsg.includes('network is unreachable')) {
+          hint = '无法连接 GitHub，请检查服务器网络设置';
+        } else if (errorMsg.includes('Permission denied') || errorMsg.includes('authentication')) {
+          hint = 'Git 认证失败，请检查 SSH key 或 GitHub token';
+        } else if (errorMsg.includes('fatal:')) {
+          hint = errorMsg.split('\n').find(l => l.includes('fatal:'));
+        }
+        res.json({ success: false, error: errorMsg, hint: hint });
+        return;
+      }
+      if (stdout.includes('Already up to date.')) {
+        res.json({ success: true, message: '已是最新版本', alreadyLatest: true });
+      } else {
+        res.json({ success: true, message: '代码已更新到最新版本', details: stdout });
+      }
+    });
   });
 });
 
