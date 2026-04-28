@@ -862,8 +862,8 @@
                                 <th class="table-header-cell">应用名称</th>
                                 <th class="table-header-cell">所属机构/团队</th>
                                 <th class="table-header-cell">主要市场</th>
-                                <th class="table-header-cell">ICP 备案</th>
-                                <th class="table-header-cell">教育备案</th>
+                                <th class="table-header-cell">ICP 备案/主要功能</th>
+                                <th class="table-header-cell">教育备案/开发状态</th>
                                 <th class="table-header-cell">后台域名</th>
                                 <th class="table-header-cell">产品负责人</th>
                                 <th class="table-header-cell">开发负责人</th>
@@ -1465,14 +1465,14 @@
                     name = app.app_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.team_or_institution || '<span class="text-gray-400">-</span>';
                     market = app.app_market || '<span class="text-gray-400">-</span>';
-                    icp = app.app_license_number || '<span class="text-gray-400">-</span>';
-                    education = app.education_filing || '<span class="text-gray-400">-</span>';
+                    icpOrFunction = app.app_license_number || '<span class="text-gray-400">-</span>';
+                    educationOrStatus = app.education_filing || '<span class="text-gray-400">-</span>';
                 } else {
                     name = app.miniprogram_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.miniprogram_institution || '<span class="text-gray-400">-</span>';
                     market = app.miniprogram_platform || '<span class="text-gray-400">-</span>';
-                    icp = app.miniprogram_function || '<span class="text-gray-400">-</span>';
-                    education = app.development_status || '<span class="text-gray-400">-</span>';
+                    icpOrFunction = app.miniprogram_function || '<span class="text-gray-400">-</span>';
+                    educationOrStatus = app.development_status || '<span class="text-gray-400">-</span>';
                 }
                 
                 return `
@@ -1491,10 +1491,10 @@
                             ${market}
                         </td>
                         <td class="table-cell text-gray-700">
-                            ${icp}
+                            ${icpOrFunction}
                         </td>
                         <td class="table-cell text-gray-700">
-                            ${education}
+                            ${educationOrStatus}
                         </td>
                         <td class="table-cell text-gray-700">
                             ${app.backend_domain || '<span class="text-gray-400">-</span>'}
