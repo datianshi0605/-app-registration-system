@@ -793,12 +793,18 @@
                 <table class="full-table">
                         <thead>
                             <tr>
-                                <th class="table-header-cell" style="width: 60px;">ID</th>
-                                <th class="table-header-cell" style="width: 80px;">类型</th>
-                                <th class="table-header-cell" style="width: 200px;">应用名称</th>
+                                <th class="table-header-cell">ID</th>
+                                <th class="table-header-cell">类型</th>
+                                <th class="table-header-cell">应用名称</th>
                                 <th class="table-header-cell">所属机构/团队</th>
                                 <th class="table-header-cell">应用市场/发布平台</th>
                                 <th class="table-header-cell">备案编号/主要功能</th>
+                                <th class="table-header-cell">教育备案/开发状态</th>
+                                <th class="table-header-cell">后台域名</th>
+                                <th class="table-header-cell">产品负责人</th>
+                                <th class="table-header-cell">开发负责人</th>
+                                <th class="table-header-cell">状态</th>
+                                <th class="table-header-cell">操作</th>
                             </tr>
                         </thead>
                         <tbody id="dataBody">
@@ -1382,20 +1388,27 @@
             paginationContainer.classList.remove('hidden');
             
             dataBody.innerHTML = data.map((app, index) => {
+                // 计算显示序号（从 1 开始）
                 const displayIndex = index + 1;
                 
-                let name, institution, market, feature;
+                let name = '';
+                let institution = '';
+                let market = '';
+                let icp = '';
+                let education = '';
                 
                 if (app.app_type === 'app') {
                     name = app.app_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.team_or_institution || '<span class="text-gray-400">-</span>';
                     market = app.app_market || '<span class="text-gray-400">-</span>';
-                    feature = app.app_license_number || '<span class="text-gray-400">-</span>';
+                    icp = app.app_license_number || '<span class="text-gray-400">-</span>';
+                    education = app.education_filing || '<span class="text-gray-400">-</span>';
                 } else {
                     name = app.miniprogram_name || '<span class="text-gray-400">未命名</span>';
                     institution = app.miniprogram_institution || '<span class="text-gray-400">-</span>';
                     market = app.miniprogram_platform || '<span class="text-gray-400">-</span>';
-                    feature = app.miniprogram_function || '<span class="text-gray-400">-</span>';
+                    icp = app.miniprogram_function || '<span class="text-gray-400">-</span>';
+                    education = app.development_status || '<span class="text-gray-400">-</span>';
                 }
                 
                 return `
@@ -1414,7 +1427,35 @@
                             ${market}
                         </td>
                         <td class="table-cell text-gray-700">
-                            ${feature}
+                            ${icp}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${education}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.backend_domain || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.product_owner || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell text-gray-700">
+                            ${app.dev_owner || '<span class="text-gray-400">-</span>'}
+                        </td>
+                        <td class="table-cell">
+                            <span class="status-badge ${getStatusClass(app.status)}">${formatStatus(app.status)}</span>
+                        </td>
+                        <td class="table-cell">
+                            <div class="flex gap-2 justify-center">
+                                <button onclick="showEditModal(${app.id})" class="action-btn action-edit" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="showDeleteModal(${app.id})" class="action-btn action-delete" title="下线">
+                                    <i class="fas fa-archive"></i>
+                                </button>
+                                <button onclick="showPermanentDeleteModal(${app.id})" class="action-btn action-permanent-delete" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
