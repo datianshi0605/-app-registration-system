@@ -98,444 +98,7 @@
             background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
         }
         
-        /* Autocomplete dropdown styles */
-        .autocomplete-wrapper {
-            position: relative;
-        }
-        .autocomplete-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            max-height: 200px;
-            overflow-y: auto;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-        }
-        .autocomplete-dropdown.show {
-            display: block;
-        }
-        .autocomplete-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            color: #374151;
-            transition: background 0.15s;
-        }
-        .autocomplete-item:hover,
-        .autocomplete-item.active {
-            background: #eff6ff;
-            color: #1d4ed8;
-        }
-        .autocomplete-no-result {
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            color: #9ca3af;
-            text-align: center;
-        }
-        
-        .action-permanent-delete { 
-            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-            color: #991b1b;
-            border: 1px solid #f87171;
-        }
-        .action-permanent-delete:hover { 
-            background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
-        }
-        
-        .main-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        /* Modern card design with shadows and gradients */
-        .card {
-            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            margin-bottom: 2rem;
-            border: 1px solid #e5e7eb;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-        }
-        
-        .card-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid #f3f4f6;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-        
-        .card-body {
-            padding: 2rem;
-        }
-        
-        /* Modern form layout - initially hidden fields */
-        .form-row {
-            display: flex;
-            margin-bottom: 1.5rem;
-            align-items: center;
-        }
-        
-        .form-label {
-            width: 140px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-right: 1.5rem;
-            text-align: right;
-        }
-        
-        .form-label.required::after {
-            content: "*";
-            color: #ef4444;
-            margin-left: 4px;
-        }
-        
-        .form-input,
-        .form-textarea,
-        .form-select {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            min-width: 220px;
-            background-color: #ffffff;
-            transition: all 0.2s ease;
-        }
-        
-        .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .form-input:hover,
-        .form-textarea:hover,
-        .form-select:hover {
-            border-color: #9ca3af;
-        }
-        
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .no-data {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #6b7280;
-            font-size: 1.25rem;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border: 2px dashed #e5e7eb;
-        }
-        
-        .no-data i {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: #9ca3af;
-        }
-        
-        /* Modern tab style with gradients */
-        .tab-active {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        .tab-inactive {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            color: #4b5563;
-            border: 2px solid #e5e7eb;
-        }
-        
-        .tab-active:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-        }
-        
-        .tab-inactive:hover {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            color: #374151;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 240px;
-            margin: 1.5rem 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 2px solid #e5e7eb;
-        }
-        
-        .analytics-section {
-            margin-top: 2.5rem;
-            padding-top: 2.5rem;
-            border-top: 2px solid #e5e7eb;
-        }
-        
-        .full-table {
-            width: 100%;
-            min-width: 2400px;
-            border-collapse: collapse;
-        }
-        
-        /* Modern button styles with gradients */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 2px solid transparent;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #065f46 100%);
-        }
-        
-        .btn-purple {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
-        }
-        
-        .btn-purple:hover {
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-        }
-        
-        .btn-orange {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
-        }
-        
-        .btn-orange:hover {
-            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-        }
-        
-        /* Modern pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 2rem;
-            gap: 0.75rem;
-        }
-        
-        .pagination-info {
-            margin-right: 2rem;
-            color: #4b5563;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        
-        .page-item {
-            padding: 0.75rem 1.25rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border: 2px solid #e5e7eb;
-            color: #4b5563;
-        }
-        
-        .page-item:hover {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            color: #374151;
-            transform: translateY(-1px);
-        }
-        
-        .page-item.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            border-color: #3b82f6;
-        }
-        
-        .page-item.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .page-size-selector {
-            margin-left: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-weight: 600;
-            color: #4b5563;
-        }
-        
-        .show-all-toggle {
-            margin-left: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            color: #4b5563;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 24px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #e5e7eb;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #3b82f6;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-        
-        /* Table styling */
-        .table-header-cell {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 1rem 1.25rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: #1f2937;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            border-bottom: 2px solid #e5e7eb;
-        }
-        
-        .table-cell {
-            padding: 1rem 1.25rem;
-            font-size: 0.95rem;
-            color: #374151;
-            border-bottom: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-        }
-        
-        .table-row:nth-child(odd) {
-            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-        }
-        
-        .table-row:nth-child(even) {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        }
-        
-        .table-row:hover {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            transform: scale(1.002);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
-        }
-        
-        /* Initially hide type-specific fields */
-        #appFields, #miniprogramFields {
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .form-label {
-                width: auto;
-                text-align: left;
-                margin-right: 0;
-                margin-bottom: 0.75rem;
-            }
-            .full-table {
-                min-width: 1000px;
-            }
-            .pagination {
-                flex-wrap: wrap;
-            }
-            .pagination-info {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            .page-size-selector {
-                margin-left: 0;
-                margin-top: 1rem;
-            }
-            .show-all-toggle {
-                margin-left: 0;
-                margin-top: 1rem;
-            }
-        }
-    </style>
+        </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="main-container py-8">
@@ -572,9 +135,8 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">所属机构/团队</label>
-                        <select id="searchInstitution" class="form-select">
-                                <option value="">全部机构/团队</option>
-                            </select>
+                        <input type="text" id="searchInstitution" class="form-input" list="searchInstitution-list" placeholder="输入机构/团队名称" autocomplete="off">
+                                <datalist id="searchInstitution-list"></datalist>
                     </div>
                     <div class="form-row">
                         <label class="form-label">应用类型</label>
@@ -690,10 +252,8 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label required">所属团队</label>
-                            <div class="autocomplete-wrapper">
-                                <input type="text" id="teamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司" autocomplete="off">
-                                <div id="teamOrInstitution-dropdown" class="autocomplete-dropdown"></div>
-                            </div>
+                            <input type="text" id="teamOrInstitution" required class="form-input" list="teamOrInstitution-list" placeholder="选择或输入所属团队" autocomplete="off">
+                                <datalist id="teamOrInstitution-list"></datalist>
                         </div>
                         <div class="form-row">
                             <label class="form-label">主要市场</label>
@@ -721,10 +281,8 @@
                         </div>
                         <div class="form-row">
                             <label class="form-label required">小程序所属机构</label>
-                            <div class="autocomplete-wrapper">
-                                <input type="text" id="miniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门" autocomplete="off">
-                                <div id="miniprogramInstitution-dropdown" class="autocomplete-dropdown"></div>
-                            </div>
+                            <input type="text" id="miniprogramInstitution" required class="form-input" list="miniprogramInstitution-list" placeholder="选择或输入所属机构" autocomplete="off">
+                                <datalist id="miniprogramInstitution-list"></datalist>
                         </div>
                         <div class="form-row">
                             <label class="form-label">小程序发布平台</label>
@@ -905,10 +463,8 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label required">所属团队</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="editTeamOrInstitution" required class="form-input" placeholder="例如：技术部、产品团队、XX公司" autocomplete="off">
-                            <div id="editTeamOrInstitution-dropdown" class="autocomplete-dropdown"></div>
-                        </div>
+                        <input type="text" id="editTeamOrInstitution" required class="form-input" list="editTeamOrInstitution-list" placeholder="选择或输入所属团队" autocomplete="off">
+                                <datalist id="editTeamOrInstitution-list"></datalist>
                     </div>
                     <div class="form-row">
                         <label class="form-label">主要市场</label>
@@ -936,10 +492,8 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label required">小程序所属机构</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="editMiniprogramInstitution" required class="form-input" placeholder="例如：XX公司、XX部门" autocomplete="off">
-                            <div id="editMiniprogramInstitution-dropdown" class="autocomplete-dropdown"></div>
-                        </div>
+                        <input type="text" id="editMiniprogramInstitution" required class="form-input" list="editMiniprogramInstitution-list" placeholder="选择或输入所属机构" autocomplete="off">
+                                <datalist id="editMiniprogramInstitution-list"></datalist>
                     </div>
                     <div class="form-row">
                         <label class="form-label">小程序发布平台</label>
@@ -1549,24 +1103,14 @@
             
             if (app.app_type === 'app') {
                 editAppName.value = app.app_name || '';
-                const teamVal = app.team_or_institution || '';
-                editTeamOrInstitution.value = teamVal;
-                const teamCustom = document.getElementById('editTeamOrInstitutionCustom');
-                if (teamVal && ![...editTeamOrInstitution.options].some(o => o.value === teamVal)) {
-                    teamCustom.value = teamVal;
-                }
+                editTeamOrInstitution.value = app.team_or_institution || '';
                 editAppMarket.value = app.app_market || '';
                 editAppLicenseNumber.value = app.app_license_number || '';
                 editIcpLicenseNumber.value = app.icp_license_number || '';
                 editEducationFiling.value = app.education_filing || '';
             } else {
                 editMiniprogramName.value = app.miniprogram_name || '';
-                const instVal = app.miniprogram_institution || '';
-                editMiniprogramInstitution.value = instVal;
-                const instCustom = document.getElementById('editMiniprogramInstitutionCustom');
-                if (instVal && ![...editMiniprogramInstitution.options].some(o => o.value === instVal)) {
-                    instCustom.value = instVal;
-                }
+                editMiniprogramInstitution.value = app.miniprogram_institution || '';
                 editMiniprogramPlatform.value = app.miniprogram_platform || '';
                 editMiniprogramFunction.value = app.miniprogram_function || '';
                 editDevelopmentStatus.value = app.development_status || '';
@@ -1706,14 +1250,14 @@
             
             if (appTypeSelect.value === 'app') {
                 application.appName = appNameInput.value;
-                application.teamOrInstitution = document.getElementById('teamOrInstitutionCustom').value || teamOrInstitutionInput.value;
+                application.teamOrInstitution = teamOrInstitutionInput.value;
                 application.appMarket = appMarketInput.value;
                 application.appLicenseNumber = appLicenseNumberInput.value;
                 application.icpLicenseNumber = icpLicenseNumberInput.value;
                 application.educationFiling = educationFilingInput.value;
             } else {
                 application.miniprogramName = miniprogramNameInput.value;
-                application.miniprogramInstitution = document.getElementById('miniprogramInstitutionCustom').value || miniprogramInstitutionInput.value;
+                application.miniprogramInstitution = miniprogramInstitutionInput.value;
                 application.miniprogramPlatform = miniprogramPlatformInput.value;
                 application.miniprogramFunction = miniprogramFunctionInput.value;
                 application.developmentStatus = developmentStatusInput.value;
@@ -2113,14 +1657,14 @@
             
             if (editAppType.value === 'app') {
                 application.appName = editAppName.value;
-                application.teamOrInstitution = document.getElementById('editTeamOrInstitutionCustom').value || editTeamOrInstitution.value;
+                application.teamOrInstitution = editTeamOrInstitution.value;
                 application.appMarket = editAppMarket.value;
                 application.appLicenseNumber = editAppLicenseNumber.value;
                 application.icpLicenseNumber = editIcpLicenseNumber.value;
                 application.educationFiling = editEducationFiling.value;
             } else {
                 application.miniprogramName = editMiniprogramName.value;
-                application.miniprogramInstitution = document.getElementById('editMiniprogramInstitutionCustom').value || editMiniprogramInstitution.value;
+                application.miniprogramInstitution = editMiniprogramInstitution.value;
                 application.miniprogramPlatform = editMiniprogramPlatform.value;
                 application.miniprogramFunction = editMiniprogramFunction.value;
                 application.developmentStatus = editDevelopmentStatus.value;
@@ -2249,21 +1793,17 @@
                 const res = await fetch('/api/institutions?q=');
                 if (res.ok) {
                     const list = await res.json();
-                    const selects = [
-                        'teamOrInstitution',
-                        'miniprogramInstitution',
-                        'editTeamOrInstitution',
-                        'editMiniprogramInstitution',
-                        'searchInstitution'
+                    const datalists = [
+                        { input: 'teamOrInstitution', list: 'teamOrInstitution-list' },
+                        { input: 'miniprogramInstitution', list: 'miniprogramInstitution-list' },
+                        { input: 'editTeamOrInstitution', list: 'editTeamOrInstitution-list' },
+                        { input: 'editMiniprogramInstitution', list: 'editMiniprogramInstitution-list' },
+                        { input: 'searchInstitution', list: 'searchInstitution-list' }
                     ];
-                    selects.forEach(id => {
-                        const sel = document.getElementById(id);
-                        if (!sel) return;
-                        const isSearch = id === 'searchInstitution';
-                        const defaultText = isSearch ? '全部机构/团队' : 
-                                           id.includes('team') ? '请选择所属团队' : '请选择所属机构';
-                        sel.innerHTML = '<option value="">' + defaultText + '</option>' +
-                            list.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">' + item + '</option>').join('');
+                    datalists.forEach(({ input, list }) => {
+                        const dl = document.getElementById(list);
+                        if (!dl) return;
+                        dl.innerHTML = list.map(item => '<option value="' + item.replace(/"/g, '&quot;') + '">').join('');
                     });
                 }
             } catch (e) {
