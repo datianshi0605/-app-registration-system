@@ -9,6 +9,15 @@ const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 const PORT = process.env.PORT || 9999;
+const APP_VERSION = require('./package.json').version;
+
+// ---- 进程级错误处理，防止服务崩溃 ----
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] uncaughtException:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[FATAL] unhandledRejection:', reason);
+});
 
 // Ensure uploads directory exists
 if (!fs.existsSync('uploads')) {
@@ -947,6 +956,11 @@ app.get('/api/analytics/status', (req, res) => {
       count: row.count
     })));
   });
+});
+
+// 版本号 API
+app.get('/api/version', (req, res) => {
+  res.json({ version: APP_VERSION });
 });
 
 // Serve React app
