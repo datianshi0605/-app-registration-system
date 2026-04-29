@@ -2003,6 +2003,8 @@
                 const ctx = document.getElementById('teamChart').getContext('2d');
                 if (teamChart) teamChart.destroy();
                 if (top5.length > 0) {
+                    const maxVal = Math.max(...top5.map(item => item.count));
+                    const suggestedMax = Math.ceil(maxVal * 1.3 / 10) * 10;
                     teamChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
@@ -2021,7 +2023,7 @@
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    grace: '30%',
+                                    suggestedMax: suggestedMax,
                                     ticks: {
                                         precision: 0,
                                         font: {
@@ -2082,6 +2084,8 @@
                 const ctx = document.getElementById('statusChart').getContext('2d');
                 if (statusChart) statusChart.destroy();
                 if (data.length > 0) {
+                    const maxVal = Math.max(...data.map(item => item.count));
+                    const suggestedMax = Math.ceil(maxVal * 1.3 / 10) * 10;
                     statusChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
@@ -2100,7 +2104,7 @@
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    grace: '30%',
+                                    suggestedMax: suggestedMax,
                                     ticks: {
                                         precision: 0,
                                         font: {
