@@ -292,7 +292,7 @@
         
         .chart-container {
             position: relative;
-            height: 360px;
+            height: 420px;
             margin: 1.5rem 0;
             border-radius: 12px;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -683,7 +683,19 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="card fade-in" style="margin-bottom: 0;">
+                <div class="card-body flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">应用总量</p>
+                        <h3 class="text-3xl font-bold text-orange-600" id="totalCount">0</h3>
+                    </div>
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-layer-group text-2xl text-orange-600"></i>
+                    </div>
+                </div>
+            </div>
+
             <div class="card fade-in" style="margin-bottom: 0;">
                 <div class="card-body flex items-center justify-between">
                     <div>
@@ -934,7 +946,7 @@
                 <div style="margin-top: 2rem;">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">机构/团队分布</h3>
                     <div id="teamChartWrapper" style="overflow-x: auto; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px solid #e5e7eb;">
-                        <div id="teamChartInner" style="height: 400px; min-width: 100%;">
+                        <div id="teamChartInner" style="height: 450px; min-width: 100%;">
                             <canvas id="teamChart"></canvas>
                         </div>
                     </div>
@@ -1927,8 +1939,11 @@
                 if (!response.ok) throw new Error('Failed to fetch statistics');
                 const stats = await response.json();
                 
-                document.getElementById('appCount').textContent = stats.appCount || 0;
-                document.getElementById('miniprogramCount').textContent = stats.miniprogramCount || 0;
+                const appCount = stats.appCount || 0;
+                const mpCount = stats.miniprogramCount || 0;
+                document.getElementById('totalCount').textContent = appCount + mpCount;
+                document.getElementById('appCount').textContent = appCount;
+                document.getElementById('miniprogramCount').textContent = mpCount;
                 document.getElementById('institutionCount').textContent = stats.institutionCount || 0;
             } catch (error) {
                 console.error('Error fetching statistics:', error);
