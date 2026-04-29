@@ -931,8 +931,7 @@ app.get('/api/analytics/team', (req, res) => {
               WHEN app_type = 'app' THEN team_or_institution
               WHEN app_type = 'miniprogram' THEN miniprogram_institution
             END
-          ORDER BY count DESC 
-          LIMIT 10`, [], (err, rows) => {
+          ORDER BY count DESC`, [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
