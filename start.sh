@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# APP/小程序登记系统 - 快速启动脚本
+# APP/小程序登记系统 - 启动脚本（使用 pm2 管理进程）
 #
 
 set -e
@@ -20,6 +20,14 @@ fi
 # 创建 uploads 目录
 mkdir -p uploads
 
-# 启动服务
-echo "🚀 启动 APP/小程序登记管理系统..."
-node server.js
+# 用 pm2 启动（崩溃自动重启）
+if command -v pm2 &>/dev/null; then
+    echo "🚀 使用 pm2 启动（崩溃自动重启）..."
+    pm2 start ecosystem.config.js
+    pm2 save
+    echo "✅ 服务已启动，使用 pm2 logs app-registration 查看日志"
+else
+    echo "⚠️  未安装 pm2，使用普通模式启动..."
+    echo "   建议安装：npm install -g pm2"
+    node server.js
+fi

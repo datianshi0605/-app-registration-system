@@ -1240,10 +1240,20 @@
         let currentPage = 1;
         let currentPageSize = 20;
 
-        // 加载版本号
-        fetch('/api/version').then(r => r.json()).then(d => {
-            document.getElementById('versionBadge').textContent = 'v' + d.version;
-        }).catch(() => {});
+        // 加载版本号 + 自动检测更新
+        let __currentVersion = null;
+        function checkVersion() {
+            fetch('/api/version').then(r => r.json()).then(d => {
+                document.getElementById('versionBadge').textContent = 'v' + d.version;
+                if (__currentVersion && __currentVersion !== d.version) {
+                    console.log(`检测到新版本: ${__currentVersion} → ${d.version}，自动刷新...`);
+                    location.reload();
+                }
+                __currentVersion = d.version;
+            }).catch(() => {});
+        }
+        checkVersion();
+        setInterval(checkVersion, 30000); // 每 30 秒检查一次
 
         // Chart instances
         let typeChart = null;
