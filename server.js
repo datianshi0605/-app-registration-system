@@ -972,6 +972,22 @@ app.get('*', (req, res) => {
 const { exec } = require('child_process');
 const AdmZip = require('adm-zip');
 
+// 自动递增 patch 版本号
+function bumpPatchVersion() {
+  try {
+    const pkgPath = path.join(__dirname, 'package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    const parts = pkg.version.split('.');
+    parts[2] = String(Number(parts[2]) + 1);
+    pkg.version = parts.join('.');
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+    return pkg.version;
+  } catch (e) {
+    console.error('Version bump failed:', e.message);
+    return null;
+  }
+}
+
 // Upload update package
 app.post('/api/update/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
@@ -1050,6 +1066,14 @@ app.post('/api/update/upload', upload.single('file'), (req, res) => {
 
     // Clean up uploaded file
     fs.unlinkSync(req.file.path);
+
+    // 代码更新后自动递增版本号
+    if (updateCode) {
+      const newVer = bumpPatchVersion();
+      if (newVer) {
+        logs.push({ type: 'success', message: `版本号已更新为 v${newVer}` });
+      }
+    }
 
     // Install deps if requested
     if (installDeps) {
@@ -1130,7 +1154,9 @@ app.post('/api/update/pull', (req, res) => {
       if (stdout.includes('Already up to date.')) {
         res.json({ success: true, message: '已是最新版本', alreadyLatest: true });
       } else {
-        res.json({ success: true, message: '代码已更新到最新版本', details: stdout });
+        const newVer = bumpPatchVersion();
+        const verMsg = newVer ? ` (v${newVer})` : '';
+        res.json({ success: true, message: `代码已更新到最新版本${verMsg}`, details: stdout });
       }
     });
   });
